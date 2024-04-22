@@ -1,0 +1,14 @@
+F:\D\VSCs\Test\bin\Debug\net8.0\Test.exe
+F:\D\VSCs\Test\bin\Debug\net8.0\Test.deps.json
+F:\D\VSCs\Test\bin\Debug\net8.0\Test.runtimeconfig.json
+F:\D\VSCs\Test\bin\Debug\net8.0\Test.dll
+F:\D\VSCs\Test\bin\Debug\net8.0\Test.pdb
+F:\D\VSCs\Test\obj\Debug\net8.0\Test.GeneratedMSBuildEditorConfig.editorconfig
+F:\D\VSCs\Test\obj\Debug\net8.0\Test.AssemblyInfoInputs.cache
+F:\D\VSCs\Test\obj\Debug\net8.0\Test.AssemblyInfo.cs
+F:\D\VSCs\Test\obj\Debug\net8.0\Test.csproj.CoreCompileInputs.cache
+F:\D\VSCs\Test\obj\Debug\net8.0\Test.dll
+F:\D\VSCs\Test\obj\Debug\net8.0\refint\Test.dll
+F:\D\VSCs\Test\obj\Debug\net8.0\Test.pdb
+F:\D\VSCs\Test\obj\Debug\net8.0\Test.genruntimeconfig.cache
+F:\D\VSCs\Test\obj\Debug\net8.0\ref\Test.dll

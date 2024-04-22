@@ -1,0 +1,90 @@
+using System;
+using System.Runtime.Intrinsics.Arm;
+using System.Text;
+
+namespace NgocThe
+
+{
+
+    public class Animal
+    {
+        public int Legs{get;set;}
+
+        public float Height{get;set;}
+
+        public Animal()
+        {
+            this.Legs = 0;
+            this.Height = 0;
+        }
+
+        public Animal(int legs, float height)
+        {
+            this.Legs = legs;
+            this.Height = height;
+        }
+        public void ShowLeg()
+        {
+            System.Console.WriteLine("Động vật có {0} chân.", Legs);
+        }
+    }
+
+    public class Cat:Animal
+    {
+        public string Food{get;set;}
+
+        public Cat(): base()
+        {
+            this.Legs = 4;
+            this.Food = "Mouse";
+        }
+
+        public Cat(int legs, float height, string food):base(legs, height)
+        {
+            this.Food = food;
+        }
+
+        public void Eat()
+        {
+            System.Console.WriteLine(Food);
+        }
+    }
+
+    public sealed class A1
+    {
+        public string mess = "Class nay ko the ke thua";
+
+    }
+
+    public class MyClass<T>
+    {
+
+        public void Add(T x)
+        {
+
+        }
+    }
+
+    public class Test
+    {
+        
+        static T Add<T>(T x, T y)
+        {
+            dynamic dx = x;
+            dynamic dy = y;
+            return dx + dy;
+        }
+        static void Main()
+        {
+            int a = Add(2,3);
+            double b = Add(1.2,5);
+            string m = Add("Hello ", "World!!!");
+            System.Console.WriteLine(a.ToString());
+            System.Console.WriteLine(b.ToString());
+            System.Console.WriteLine(m);
+            MyClass<int> myClass = new MyClass<int>();
+            Console.ReadKey();
+        }
+    }
+
+}

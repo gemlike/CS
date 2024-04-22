@@ -1,0 +1,12 @@
+Namespace lồng nhau, nhiều cấp
+Các namespace cũng có thể khai báo lồng nhau, nhiều cấp sau đó dùng ký hiệu . để truy cập đến namepace mong muốn, ví dụ namepace B nằm trong namspace A
+
+namespace A {
+    // Định nghĩa các lớp, cấu trúc ...
+    namespace B {
+        // Định nghĩa các lớp, cấu trúc ...
+    }
+}
+Khi đó muốn dùng các lớp, cấu trúc ... có trong namespace B thì khai báo
+
+using A.B;
