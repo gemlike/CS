@@ -5,6 +5,8 @@ using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices.Marshalling;
 using System.Runtime.Intrinsics.Arm;
 using System.Text;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace NgocThe
 
@@ -16,57 +18,17 @@ namespace NgocThe
     // Tuy nhiên, nếu dùng dòng thứ 1, nếu có 1 class nào khác truy cập vào biến event_news và gán event_news =null đc
     // để tránh trường hợp ng dùng gán = null sẽ clear đi hết các lớp đăng ký nhận sự kiện trước đó
 
-    public class Publisher
+ 
+#region 
+//
+#endregion
+
+
+    public static class Extension1
     {
-        public event EventHandler event_news1;
-        public delegate void NotifyNews(object data);
-        public NotifyNews event_news;
-
-        EventArgs e = new EventArgs();
-
-        public void Send()
+        public static string AddThe(this string s, string addString)
         {
-            
-            event_news?.Invoke("Co tin moi");
-        }
-        
-        public void Send1()
-        {
-            MyEventArgs e = new MyEventArgs();
-            e.Data = "Day la 1 event";
-            event_news1.Invoke(null, e);
-        }
-
-    }
-
-    public class MyEventArgs : EventArgs
-    {
-        private string data;
-
-        public string Data
-        {
-            get{return data;}
-            set{data = value;}
-        }
-    }
-
-    public class SubcriberA
-    {
-        public void Sub(Publisher p)
-        {
-            p.event_news +=  ReceiveFromPublisher;
-            p.event_news1 += ReceiveFromPublisher;   
-        }
-
-        public void ReceiveFromPublisher(object data)
-        {
-            System.Console.WriteLine("SubcriberA: "+ data.ToString());;
-        }
-
-        public void ReceiveFromPublisher(object t, EventArgs e)
-        {
-            MyEventArgs my = (MyEventArgs)e;
-            System.Console.WriteLine(my.Data);
+            return string.Concat(s, addString);
         }
     }
     public class Test
@@ -76,14 +38,10 @@ namespace NgocThe
         static void Main()
         {
             // Console.OutputEncoding = Encoding.UTF8;
-
-            Publisher pb = new Publisher();
-            SubcriberA srA = new SubcriberA();
-
-            srA.Sub(pb);
-            pb.event_news?.Invoke("hihi");
-            pb.Send1();
-            System.Console.WriteLine("");
+            string m = "Hihi";
+            string m1 = string.Concat(m, " The");
+            string m2 = m1.AddThe("kk");
+            System.Console.WriteLine(m2);
             
             Console.ReadKey();
         }

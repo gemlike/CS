@@ -1,0 +1,50 @@
+using System;
+using System.Data.Common;
+using System.Net;
+using System.Runtime.ExceptionServices;
+using System.Runtime.InteropServices.Marshalling;
+using System.Runtime.Intrinsics.Arm;
+using System.Text;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace NgocThe
+
+{
+
+    //public event EventHandler event_news; sẽ tương đương với 2 dòng sau:
+    // public delegate void EventHandler(object sender?, EventArgs e);
+    // public EvenHandler event_news;
+    // Tuy nhiên, nếu dùng dòng thứ 1, nếu có 1 class nào khác truy cập vào biến event_news và gán event_news =null đc
+    // để tránh trường hợp ng dùng gán = null sẽ clear đi hết các lớp đăng ký nhận sự kiện trước đó
+
+ 
+#region 
+//
+#endregion
+
+
+    public static class Extension1
+    {
+        public static string AddThe(this string s, string addString)
+        {
+            return string.Concat(s, addString);
+        }
+    }
+    public class Test
+    {
+        
+        
+        static void Main()
+        {
+            // Console.OutputEncoding = Encoding.UTF8;
+            string m = "Hihi";
+            string m1 = string.Concat(m, " The");
+            string m2 = m1.AddThe("kk");
+            System.Console.WriteLine(m2);
+            
+            Console.ReadKey();
+        }
+    }
+
+}
