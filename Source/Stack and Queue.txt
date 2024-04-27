@@ -1,0 +1,55 @@
+using System;
+using System.Data.Common;
+using System.Net;
+using System.Runtime.ExceptionServices;
+using System.Runtime.InteropServices.Marshalling;
+using System.Runtime.Intrinsics.Arm;
+using System.Text;
+using System.Collections.Generic;
+using System.Linq;
+using System.IO;
+using System.Collections;
+using System.Collections.Immutable;
+
+namespace NgocThe
+
+{
+    public class Test
+    {
+            
+        static void Main()
+        {
+            Console.OutputEncoding = Encoding.UTF8;
+            Queue<string> qu = new Queue<string>();
+            // Add
+            qu.Enqueue("The");
+            qu.Enqueue("Ngoc");
+            qu.Enqueue("Nguyen");
+            System.Console.WriteLine("Queue");
+            // Lấy phần tử đầu tiên mà ko remove
+            System.Console.WriteLine(qu.Peek());
+            while(qu.Count > 0)
+            {
+                string str = qu.Dequeue();
+                System.Console.WriteLine(str);
+
+                
+            }
+
+            Stack<string> st = new Stack<string>();
+            st.Push("The");
+            st.Push("Ngoc");
+            st.Push("Nguyen");
+            System.Console.WriteLine("Stack");
+            System.Console.WriteLine(st.Peek());
+            while(st.Count > 0)
+            {
+                string s1 = st.Pop();
+                System.Console.WriteLine(s1);
+            }
+
+            Console.ReadKey();
+        }
+    }
+
+}

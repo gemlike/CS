@@ -1,0 +1,37 @@
+using System;
+using System.Data.Common;
+using System.Net;
+using System.Runtime.ExceptionServices;
+using System.Runtime.InteropServices.Marshalling;
+using System.Runtime.Intrinsics.Arm;
+using System.Text;
+using System.Collections.Generic;
+using System.Linq;
+using System.IO;
+
+namespace NgocThe
+
+{
+
+    public class Test
+    {
+        
+        
+        static void Main()
+        {
+            Console.OutputEncoding = Encoding.UTF8;
+            
+            DriveInfo[] di = DriveInfo.GetDrives();
+            foreach(var item in di)
+            {
+                System.Console.WriteLine("Ổ: " + item.Name);
+                System.Console.WriteLine("Tổng dung lượng: " + (item.TotalSize/1024/1024/1024) + " GB");
+                System.Console.WriteLine("Dung lượng trống: " + (item.TotalFreeSpace/1024/1024/1024) + " GB");
+                System.Console.WriteLine("");
+            }           
+            
+            Console.ReadKey();
+        }
+    }
+
+}

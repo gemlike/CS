@@ -7,42 +7,36 @@ using System.Runtime.Intrinsics.Arm;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
+using System.Collections;
+using System.Collections.Immutable;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
 namespace NgocThe
 
 {
-
-    //public event EventHandler event_news; sẽ tương đương với 2 dòng sau:
-    // public delegate void EventHandler(object sender?, EventArgs e);
-    // public EvenHandler event_news;
-    // Tuy nhiên, nếu dùng dòng thứ 1, nếu có 1 class nào khác truy cập vào biến event_news và gán event_news =null đc
-    // để tránh trường hợp ng dùng gán = null sẽ clear đi hết các lớp đăng ký nhận sự kiện trước đó
-
- 
-#region 
-//
-#endregion
-
-
-    public static class Extension1
-    {
-        public static string AddThe(this string s, string addString)
-        {
-            return string.Concat(s, addString);
-        }
-    }
     public class Test
     {
-        
-        
+        static void Change(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch(e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    System.Console.WriteLine("Bạn vừa thêm phần tử.");
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    System.Console.WriteLine("Bạn vừa xóa phần tử.");
+                    break;
+            }
+        }
         static void Main()
         {
-            // Console.OutputEncoding = Encoding.UTF8;
-            string m = "Hihi";
-            string m1 = string.Concat(m, " The");
-            string m2 = m1.AddThe("kk");
-            System.Console.WriteLine(m2);
-            
+            Console.OutputEncoding = Encoding.UTF8;
+            ObservableCollection<string> obs = new ObservableCollection<string>();
+            obs.CollectionChanged += Change;
+            obs.Add("1");
+            obs.RemoveAt(0);
             Console.ReadKey();
         }
     }

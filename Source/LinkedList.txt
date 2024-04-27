@@ -1,0 +1,48 @@
+using System;
+using System.Data.Common;
+using System.Net;
+using System.Runtime.ExceptionServices;
+using System.Runtime.InteropServices.Marshalling;
+using System.Runtime.Intrinsics.Arm;
+using System.Text;
+using System.Collections.Generic;
+using System.Linq;
+using System.IO;
+using System.Collections;
+using System.Collections.Immutable;
+
+namespace NgocThe
+
+{
+    public class Test
+    {
+            
+        static void Main()
+        {
+            Console.OutputEncoding = Encoding.UTF8;
+            LinkedList<string> cacbaihoc = new  LinkedList<string>();
+            
+
+            cacbaihoc.AddFirst("Bài học 3");   // thêm vào đầu danh sach
+            cacbaihoc.AddLast("Bài học 4");    // thêm vào cuối
+            cacbaihoc.AddFirst("Bài học 2");
+            cacbaihoc.AddFirst("Bài học 1");
+            LinkedListNode<string> node = cacbaihoc.First;
+            LinkedListNode<string> nodeShow = cacbaihoc.First;
+            //Chèn vào trước phần tử thứ n
+            int n = 3;
+            for(int i = 0; i < n-1; i++)
+            {
+                node = node.Next;
+            }
+            cacbaihoc.AddBefore(node, "hehe");
+            for(int j = 0; j < cacbaihoc.Count; j++)
+            {
+                System.Console.WriteLine(nodeShow.Value);
+                nodeShow = nodeShow.Next;
+            }
+            Console.ReadKey();
+        }
+    }
+
+}

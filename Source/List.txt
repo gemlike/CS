@@ -1,0 +1,105 @@
+
+using System;
+using System.Data.Common;
+using System.Net;
+using System.Runtime.ExceptionServices;
+using System.Runtime.InteropServices.Marshalling;
+using System.Runtime.Intrinsics.Arm;
+using System.Text;
+using System.Collections.Generic;
+using System.Linq;
+using System.IO;
+
+namespace NgocThe
+
+{
+    public class Product : IComparable<Product>, IFormattable
+    {
+        public int ID{get;set;}
+        public string Name{get;set;}
+
+        public double Price{get;set;}
+
+        public string Origin{get;set;}
+        public Product()
+        {
+            ID = -1;
+            Name = "null";
+            Price = -1;
+            Origin = "No origin";
+        }
+
+        public Product(int ID, string Name, double Price, string Origin)
+        {
+            this.ID = ID;
+            this.Name = Name;
+            this.Price = Price;
+            this.Origin = Origin;
+        }
+
+        // Triển khai giao diện của IComparable<Product>
+        public int CompareTo(Product? pd)
+        {
+            if(pd != null)
+            {
+                if(this.Price >= pd.Price) return 1;
+                else return 0;
+            }
+            else
+                return 1;
+            
+        }
+
+        public string ToString(string format, IFormatProvider formatProvider)
+        {
+            if (format == null) format = "O";
+            switch (format.ToUpper()) {
+                case "O": // Xuất xứ trước
+                    return $"Xuất xứ: {Origin} - Tên: {Name} - Giá: {Price} - ID: {ID}";
+                case "N": // Tên xứ trước
+                    return $"Tên: {Name} - Xuất xứ: {Origin} - Giá: {Price} - ID: {ID}";
+                default: // Quăng lỗi nếu format sai
+                    throw new FormatException("Không hỗ trợ format này");
+            }
+        }
+
+        // Triển khai giao diện của IFormattable
+        public override string ToString()
+        {
+            return Name + " - " + Origin;
+        }
+        public string ToString(string format) => this.ToString(format, null);
+    }
+    public class Test
+    {
+        
+        
+        static void Main()
+        {
+            Console.OutputEncoding = Encoding.UTF8;
+            var products = new List<Product>()            // khởi tạo 1 phần tử
+            {
+                new Product(1, "Iphone 6", 100, "Trung Quốc")
+            };
+            var p = new Product(2, "IPhone 7", 200, "Việt Nam");
+            products.Add(p);                                                // Thêm p vào cuối List
+            products.Add(new Product(3, "IPhone 8", 400, "Lào")); 
+
+            for (int i = 1; i < products.Count; i++)
+            {
+                var pi = products[i - 1];
+                Console.WriteLine(pi.ToString());
+            }
+            System.Console.WriteLine(products[0].CompareTo(products[1]));
+            Product pd1 = products.Find((Product pd)=>
+            {
+                return pd.Origin == "Việt Nam";
+            });
+            System.Console.WriteLine("Tìm thấy phần tử VIệt Nam : " + pd1);
+            int idx = products.FindIndex(o=> o.Origin == "Việt Nam");
+            System.Console.WriteLine(idx);
+            Console.ReadKey();
+        }
+    }
+
+}

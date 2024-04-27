@@ -1,0 +1,37 @@
+using System;
+using System.Data.Common;
+using System.Net;
+using System.Runtime.ExceptionServices;
+using System.Runtime.InteropServices.Marshalling;
+using System.Runtime.Intrinsics.Arm;
+using System.Text;
+using System.Collections.Generic;
+using System.Linq;
+using System.IO;
+using System.Collections;
+
+namespace NgocThe
+
+{
+    public class Test
+    {
+            
+        static void Main()
+        {
+            Console.OutputEncoding = Encoding.UTF8;
+            SortedList<int, string> lst = new SortedList<int, string>();
+            lst.Add(5, "fndfuk");
+            lst.Add(2, "acz");
+            lst.Add(6, "fdjf");
+            lst.Add(1, "mbm");
+            lst[2] = "The";
+            for(int i = 0; i < lst.Count; i++)
+            {
+                System.Console.WriteLine(lst.Keys[i].ToString() + " - " + lst.Values[i].ToString());
+            }
+
+            Console.ReadKey();
+        }
+    }
+
+}

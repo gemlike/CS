@@ -1,0 +1,43 @@
+using System;
+using System.Data.Common;
+using System.Net;
+using System.Runtime.ExceptionServices;
+using System.Runtime.InteropServices.Marshalling;
+using System.Runtime.Intrinsics.Arm;
+using System.Text;
+using System.Collections.Generic;
+using System.Linq;
+using System.IO;
+using System.Collections;
+using System.Collections.Immutable;
+
+namespace NgocThe
+
+{
+    public class Test
+    {
+            
+        static void Main()
+        {
+            Console.OutputEncoding = Encoding.UTF8;
+            Dictionary<string, int> sodem = new Dictionary<string, int>()
+            {
+            ["one"] = 1,
+            ["tow"] = 2,
+            };
+            // Thêm hoặc cập nhật
+            sodem["three"] = 3;
+            sodem.Add("four", 4);
+
+
+            var keys = sodem.Keys;
+            foreach (var k in keys)
+            {
+                var value = sodem[k];
+                Console.WriteLine($"{k} = {value}");
+            }
+            Console.ReadKey();
+        }
+    }
+
+}
