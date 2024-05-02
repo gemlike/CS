@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<!-- saved from url=(0081)https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html -->
+<html lang="vi"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta property="fb:app_id" content="1565807193699425">
+<meta name="description" content="Khái niệm về DI,  các kiểu Inject, sử dụng DI container mặc định của NET ServiceCollection, khởi tạo dịch vụ với Factory, hàm khởi tạo, Inject thiết lập và sử dụng config file định dạng JSON cấu hình để thiết lập thuộc tính đối tượng">
+<meta property="og:image" content="https://xuanthulab.net/images/post/dependency-injection-di-trong-c-voi-servicecollection-1580.jpg">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dependency injection (DI) trong C# với ServiceCollection">
+<meta property="og:description" content="Khái niệm về DI,  các kiểu Inject, sử dụng DI container mặc định của NET ServiceCollection, khởi tạo dịch vụ với Factory, hàm khởi tạo, Inject thiết lập và sử dụng config file định dạng JSON cấu hình để thiết lập thuộc tính đối tượng">
+<meta property="og:url" content="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html">
+<title>Dependency injection (DI) trong C# với ServiceCollection</title>
+<link href="./Dependency injection (DI) trong C# với ServiceCollection_files/xtlab.min.css" media="screen" rel="stylesheet" type="text/css">
+<link href="./Dependency injection (DI) trong C# với ServiceCollection_files/font-awesome.min.css" media="screen" rel="stylesheet" type="text/css">
+<link href="./Dependency injection (DI) trong C# với ServiceCollection_files/jquery-ui.min.css" media="screen" rel="stylesheet" type="text/css">
+<link href="https://xuanthulab.net/public/img/favicon.ico" rel="shortcut icon" type="image/vnd.microsoft.icon">
+<script src="./Dependency injection (DI) trong C# với ServiceCollection_files/f(5).txt" nonce="q55xBZvL"></script><script src="./Dependency injection (DI) trong C# với ServiceCollection_files/cb=gapi.loaded_2" nonce="q55xBZvL" async=""></script><script src="./Dependency injection (DI) trong C# với ServiceCollection_files/f(6).txt" nonce="q55xBZvL"></script><script src="./Dependency injection (DI) trong C# với ServiceCollection_files/cb=gapi.loaded_1" nonce="q55xBZvL" async=""></script><script src="./Dependency injection (DI) trong C# với ServiceCollection_files/cb=gapi(2).loaded_0" nonce="q55xBZvL" async=""></script><script src="./Dependency injection (DI) trong C# với ServiceCollection_files/sdk.js.tải xuống" async="" crossorigin="anonymous"></script><script src="./Dependency injection (DI) trong C# với ServiceCollection_files/jquery-3.1.0.min.js.tải xuống"></script>
+<script src="./Dependency injection (DI) trong C# với ServiceCollection_files/popper.min.js.tải xuống"></script>
+<script src="./Dependency injection (DI) trong C# với ServiceCollection_files/jquery-ui.min.js.tải xuống"></script>
+<script src="./Dependency injection (DI) trong C# với ServiceCollection_files/jquery.ui.touch-punch.min.js.tải xuống"></script>
+<script src="./Dependency injection (DI) trong C# với ServiceCollection_files/xtlab.js.tải xuống"></script>
+
+<link rel="canonical" href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html">
+<script async="" src="./Dependency injection (DI) trong C# với ServiceCollection_files/f(7).txt"></script>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-4170344512131207",
+          enable_page_level_ads: true
+     });
+</script>
+    <script async="" src="./Dependency injection (DI) trong C# với ServiceCollection_files/js"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-1NQM4YL839');
+    </script>
+<link rel="stylesheet" href="./Dependency injection (DI) trong C# với ServiceCollection_files/default.min.css"><script src="./Dependency injection (DI) trong C# với ServiceCollection_files/highlight.min.js.tải xuống"></script>
+<meta http-equiv="origin-trial" content="AlK2UR5SkAlj8jjdEc9p3F3xuFYlF6LYjAML3EOqw1g26eCwWPjdmecULvBH5MVPoqKYrOfPhYVL71xAXI1IBQoAAAB8eyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="Amm8/NmvvQfhwCib6I7ZsmUxiSCfOxWxHayJwyU1r3gRIItzr7bNQid6O8ZYaE1GSQTa69WwhPC9flq/oYkRBwsAAACCeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="A/ERL66fN363FkXxgDc6F1+ucRUkAhjEca9W3la6xaLnD2Y1lABsqmdaJmPNaUKPKVBRpyMKEhXYl7rSvrQw+AkAAACNeyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiRmxlZGdlQmlkZGluZ0FuZEF1Y3Rpb25TZXJ2ZXIiLCJleHBpcnkiOjE3MTkzNTk5OTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A6OdGH3fVf4eKRDbXb4thXA4InNqDJDRhZ8U533U/roYjp4Yau0T3YSuc63vmAs/8ga1cD0E3A7LEq6AXk1uXgsAAACTeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiRmxlZGdlQmlkZGluZ0FuZEF1Y3Rpb25TZXJ2ZXIiLCJleHBpcnkiOjE3MTkzNTk5OTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="AlK2UR5SkAlj8jjdEc9p3F3xuFYlF6LYjAML3EOqw1g26eCwWPjdmecULvBH5MVPoqKYrOfPhYVL71xAXI1IBQoAAAB8eyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="Amm8/NmvvQfhwCib6I7ZsmUxiSCfOxWxHayJwyU1r3gRIItzr7bNQid6O8ZYaE1GSQTa69WwhPC9flq/oYkRBwsAAACCeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="A/ERL66fN363FkXxgDc6F1+ucRUkAhjEca9W3la6xaLnD2Y1lABsqmdaJmPNaUKPKVBRpyMKEhXYl7rSvrQw+AkAAACNeyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiRmxlZGdlQmlkZGluZ0FuZEF1Y3Rpb25TZXJ2ZXIiLCJleHBpcnkiOjE3MTkzNTk5OTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A6OdGH3fVf4eKRDbXb4thXA4InNqDJDRhZ8U533U/roYjp4Yau0T3YSuc63vmAs/8ga1cD0E3A7LEq6AXk1uXgsAAACTeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiRmxlZGdlQmlkZGluZ0FuZEF1Y3Rpb25TZXJ2ZXIiLCJleHBpcnkiOjE3MTkzNTk5OTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><style>.gc-bubbleDefault{background-color:transparent!important;text-align:left;padding:0!important;margin:0!important;border:0!important;table-layout:auto!important}.gc-reset{background-color:transparent!important;border:0!important;padding:0!important;margin:0!important;text-align:left}.pls-bubbleTop{border-bottom:1px solid #ccc!important}.pls-contentLeft,.pls-topTail,.pls-vertShimLeft{background-image:url(//ssl.gstatic.com/s2/oz/images/stars/po/bubblev1/border_3.gif)!important}.pls-topTail{background-repeat:repeat-x!important;background-position:bottom!important}.pls-vertShim{background-color:#fff!important;text-align:right}.tbl-grey .pls-vertShim{background-color:#f5f5f5!important}.pls-vertShimLeft{background-repeat:repeat-y!important;background-position:100%!important;height:4px}.pls-vertShimRight{height:4px}.pls-confirm-container .pls-vertShim{background-color:#fff3c2!important}.pls-contentWrap{background-color:#fff!important;position:relative!important;vertical-align:top}.pls-contentLeft{background-repeat:repeat-y;background-position:100%;vertical-align:top}.pls-dropRight{background-image:url(//ssl.gstatic.com/s2/oz/images/stars/po/bubblev1/bubbleDropR_3.png)!important;background-repeat:repeat-y!important;vertical-align:top}.pls-dropBL,.pls-dropTR .pls-dropBR,.pls-tailleft,.pls-vert,.pls-vert img{vertical-align:top}.pls-dropBottom{background-image:url(//ssl.gstatic.com/s2/oz/images/stars/po/bubblev1/bubbleDropB_3.png)!important;background-repeat:repeat-x!important;width:100%;vertical-align:top}.pls-topLeft{background:inherit!important;text-align:right;vertical-align:bottom}.pls-topRight{background:inherit!important;text-align:left;vertical-align:bottom}.pls-bottomLeft{background:inherit!important;text-align:right}.pls-bottomRight{background:inherit!important;text-align:left;vertical-align:top}.pls-tailbottom,.pls-tailleft,.pls-tailright,.pls-tailtop{display:none;position:relative}.pls-dropBL,.pls-dropBR,.pls-dropTR,.pls-tailbottom,.pls-tailleft,.pls-tailright,.pls-tailtop{background-image:url(//ssl.gstatic.com/s2/oz/images/stars/po/bubblev1/bubbleSprite_3.png)!important;background-repeat:no-repeat}.tbl-grey .pls-dropBL,.tbl-grey .pls-dropBR,.tbl-grey .pls-dropTR,.tbl-grey .pls-tailbottom,.tbl-grey .pls-tailleft,.tbl-grey .pls-tailright,.tbl-grey .pls-tailtop{background-image:url(//ssl.gstatic.com/s2/oz/images/stars/po/bubblev1/bubbleSprite-grey.png)!important}.pls-tailbottom{background-position:-23px 0}.pls-confirm-container .pls-tailbottom{background-position:-23px -10px}.pls-tailtop{background-position:-19px -20px}.pls-tailright{background-position:0 0}.pls-tailleft{background-position:-10px 0}.pls-tailtop{vertical-align:top}.gc-bubbleDefault td{line-height:0;font-size:0}.pls-tailbottom,.pls-topLeft img,.pls-topRight img{vertical-align:bottom}.bubbleDropTR,.pls-bottomLeft,.pls-bottomLeft img,.pls-dropBottom img,.pls-dropBottomL img,.pls-dropBottomR img{vertical-align:top}.pls-dropTR{background-position:0 -22px}.pls-dropBR{background-position:0 -27px}.pls-dropBL{background-position:0 -16px}.pls-spacerbottom,.pls-spacerleft,.pls-spacerright,.pls-spacertop{position:static!important}.pls-spinner{bottom:0;position:absolute;left:0;margin:auto;right:0;top:0}</style><script async="" src="./Dependency injection (DI) trong C# với ServiceCollection_files/ca-pub-4170344512131207" nonce="q55xBZvL"></script><script async="" src="./Dependency injection (DI) trong C# với ServiceCollection_files/AGSKWxWSClQblhLW7fcZEdRjAcC6F8kyoXMTAUWlBIWNJJY3x9iI4dzfPAKH2w-dyg2rPe5wSOHwKma5Y7Nlw1y60nT0TXjdbqtsiWxOhw781DogfbUIdf25tim9c8fhMQyJQqz4Y9J9-Q==" nonce="q55xBZvL"></script><script async="" src="./Dependency injection (DI) trong C# với ServiceCollection_files/AGSKWxXQS7HfQGG8TqvEEwdpovPRfWnIT2ydpES7B6puWF87pf-g59Qj19VsIUVlKPnjKEbSurTSohVkPYTxGrxmxl1-Icag38fU21xih_IbDBeyUfcZl19tTnOY0MjzA5gPINhQT5JZEg==" nonce="q55xBZvL"></script><meta http-equiv="origin-trial" content="AlK2UR5SkAlj8jjdEc9p3F3xuFYlF6LYjAML3EOqw1g26eCwWPjdmecULvBH5MVPoqKYrOfPhYVL71xAXI1IBQoAAAB8eyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="Amm8/NmvvQfhwCib6I7ZsmUxiSCfOxWxHayJwyU1r3gRIItzr7bNQid6O8ZYaE1GSQTa69WwhPC9flq/oYkRBwsAAACCeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="A/ERL66fN363FkXxgDc6F1+ucRUkAhjEca9W3la6xaLnD2Y1lABsqmdaJmPNaUKPKVBRpyMKEhXYl7rSvrQw+AkAAACNeyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiRmxlZGdlQmlkZGluZ0FuZEF1Y3Rpb25TZXJ2ZXIiLCJleHBpcnkiOjE3MTkzNTk5OTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A6OdGH3fVf4eKRDbXb4thXA4InNqDJDRhZ8U533U/roYjp4Yau0T3YSuc63vmAs/8ga1cD0E3A7LEq6AXk1uXgsAAACTeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiRmxlZGdlQmlkZGluZ0FuZEF1Y3Rpb25TZXJ2ZXIiLCJleHBpcnkiOjE3MTkzNTk5OTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><script async="" src="./Dependency injection (DI) trong C# với ServiceCollection_files/AGSKWxVdDJotB-Uj1fHrHClRLSyZJFF3PF7La1CfajENu8cpAz2QSWkQdZYV_ET2DvfzDMjJ_NlEhyD43h16hpr1yAEeETIVQAcd-re0IkxtfWelG8-wGCZ8QbPvdjd2VtSgkE6Gjoqq9w==" nonce="q55xBZvL"></script><style type="text/css" data-fbcssmodules="css:fb.css.base css:fb.css.dialog css:fb.css.iframewidget css:fb.css.customer_chat_plugin_iframe">.fb_hidden{position:absolute;top:-10000px;z-index:10001}.fb_reposition{overflow:hidden;position:relative}.fb_invisible{display:none}.fb_reset{background:none;border:0;border-spacing:0;color:#000;cursor:auto;direction:ltr;font-family:'lucida grande', tahoma, verdana, arial, sans-serif;font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;letter-spacing:normal;line-height:1;margin:0;overflow:visible;padding:0;text-align:left;text-decoration:none;text-indent:0;text-shadow:none;text-transform:none;visibility:visible;white-space:normal;word-spacing:normal}.fb_reset>div{overflow:hidden}@keyframes fb_transform{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}.fb_animate{animation:fb_transform .3s forwards}
+.fb_hidden{position:absolute;top:-10000px;z-index:10001}.fb_reposition{overflow:hidden;position:relative}.fb_invisible{display:none}.fb_reset{background:none;border:0;border-spacing:0;color:#000;cursor:auto;direction:ltr;font-family:'lucida grande', tahoma, verdana, arial, sans-serif;font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;letter-spacing:normal;line-height:1;margin:0;overflow:visible;padding:0;text-align:left;text-decoration:none;text-indent:0;text-shadow:none;text-transform:none;visibility:visible;white-space:normal;word-spacing:normal}.fb_reset>div{overflow:hidden}@keyframes fb_transform{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}.fb_animate{animation:fb_transform .3s forwards}
+.fb_dialog{background:rgba(82, 82, 82, .7);position:absolute;top:-10000px;z-index:10001}.fb_dialog_advanced{border-radius:8px;padding:10px}.fb_dialog_content{background:#fff;color:#373737}.fb_dialog_close_icon{background:url(https://connect.facebook.net/rsrc.php/v3/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 0 transparent;cursor:pointer;display:block;height:15px;position:absolute;right:18px;top:17px;width:15px}.fb_dialog_mobile .fb_dialog_close_icon{left:5px;right:auto;top:5px}.fb_dialog_padding{background-color:transparent;position:absolute;width:1px;z-index:-1}.fb_dialog_close_icon:hover{background:url(https://connect.facebook.net/rsrc.php/v3/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 -15px transparent}.fb_dialog_close_icon:active{background:url(https://connect.facebook.net/rsrc.php/v3/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 -30px transparent}.fb_dialog_iframe{line-height:0}.fb_dialog_content .dialog_title{background:#6d84b4;border:1px solid #365899;color:#fff;font-size:14px;font-weight:bold;margin:0}.fb_dialog_content .dialog_title>span{background:url(https://connect.facebook.net/rsrc.php/v3/yd/r/Cou7n-nqK52.gif) no-repeat 5px 50%;float:left;padding:5px 0 7px 26px}body.fb_hidden{height:100%;left:0;margin:0;overflow:visible;position:absolute;top:-10000px;transform:none;width:100%}.fb_dialog.fb_dialog_mobile.loading{background:url(https://connect.facebook.net/rsrc.php/v3/ya/r/3rhSv5V8j3o.gif) white no-repeat 50% 50%;min-height:100%;min-width:100%;overflow:hidden;position:absolute;top:0;z-index:10001}.fb_dialog.fb_dialog_mobile.loading.centered{background:none;height:auto;min-height:initial;min-width:initial;width:auto}.fb_dialog.fb_dialog_mobile.loading.centered #fb_dialog_loader_spinner{width:100%}.fb_dialog.fb_dialog_mobile.loading.centered .fb_dialog_content{background:none}.loading.centered #fb_dialog_loader_close{clear:both;color:#fff;display:block;font-size:18px;padding-top:20px}#fb-root #fb_dialog_ipad_overlay{background:rgba(0, 0, 0, .4);bottom:0;left:0;min-height:100%;position:absolute;right:0;top:0;width:100%;z-index:10000}#fb-root #fb_dialog_ipad_overlay.hidden{display:none}.fb_dialog.fb_dialog_mobile.loading iframe{visibility:hidden}.fb_dialog_mobile .fb_dialog_iframe{position:sticky;top:0}.fb_dialog_content .dialog_header{background:linear-gradient(from(#738aba), to(#2c4987));border-bottom:1px solid;border-color:#043b87;box-shadow:white 0 1px 1px -1px inset;color:#fff;font:bold 14px Helvetica, sans-serif;text-overflow:ellipsis;text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0;vertical-align:middle;white-space:nowrap}.fb_dialog_content .dialog_header table{height:43px;width:100%}.fb_dialog_content .dialog_header td.header_left{font-size:12px;padding-left:5px;vertical-align:middle;width:60px}.fb_dialog_content .dialog_header td.header_right{font-size:12px;padding-right:5px;vertical-align:middle;width:60px}.fb_dialog_content .touchable_button{background:linear-gradient(from(#4267B2), to(#2a4887));background-clip:padding-box;border:1px solid #29487d;border-radius:3px;display:inline-block;line-height:18px;margin-top:3px;max-width:85px;padding:4px 12px;position:relative}.fb_dialog_content .dialog_header .touchable_button input{background:none;border:none;color:#fff;font:bold 12px Helvetica, sans-serif;margin:2px -12px;padding:2px 6px 3px 6px;text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0}.fb_dialog_content .dialog_header .header_center{color:#fff;font-size:16px;font-weight:bold;line-height:18px;text-align:center;vertical-align:middle}.fb_dialog_content .dialog_content{background:url(https://connect.facebook.net/rsrc.php/v3/y9/r/jKEcVPZFk-2.gif) no-repeat 50% 50%;border:1px solid #4a4a4a;border-bottom:0;border-top:0;height:150px}.fb_dialog_content .dialog_footer{background:#f5f6f7;border:1px solid #4a4a4a;border-top-color:#ccc;height:40px}#fb_dialog_loader_close{float:left}.fb_dialog.fb_dialog_mobile .fb_dialog_close_icon{visibility:hidden}#fb_dialog_loader_spinner{animation:rotateSpinner 1.2s linear infinite;background-color:transparent;background-image:url(https://connect.facebook.net/rsrc.php/v3/yD/r/t-wz8gw1xG1.png);background-position:50% 50%;background-repeat:no-repeat;height:24px;width:24px}@keyframes rotateSpinner{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.fb_iframe_widget{display:inline-block;position:relative}.fb_iframe_widget span{display:inline-block;position:relative;text-align:justify}.fb_iframe_widget iframe{position:absolute}.fb_iframe_widget_fluid_desktop,.fb_iframe_widget_fluid_desktop span,.fb_iframe_widget_fluid_desktop iframe{max-width:100%}.fb_iframe_widget_fluid_desktop iframe{min-width:220px;position:relative}.fb_iframe_widget_lift{z-index:1}.fb_iframe_widget_fluid{display:inline}.fb_iframe_widget_fluid span{width:100%}
+.fb_mpn_mobile_landing_page_slide_out{animation-duration:200ms;animation-name:fb_mpn_landing_page_slide_out;transition-timing-function:ease-in}.fb_mpn_mobile_landing_page_slide_out_from_left{animation-duration:200ms;animation-name:fb_mpn_landing_page_slide_out_from_left;transition-timing-function:ease-in}.fb_mpn_mobile_landing_page_slide_up{animation-duration:500ms;animation-name:fb_mpn_landing_page_slide_up;transition-timing-function:ease-in}.fb_mpn_mobile_bounce_in{animation-duration:300ms;animation-name:fb_mpn_bounce_in;transition-timing-function:ease-in}.fb_mpn_mobile_bounce_out{animation-duration:300ms;animation-name:fb_mpn_bounce_out;transition-timing-function:ease-in}.fb_mpn_mobile_bounce_out_v2{animation-duration:300ms;animation-name:fb_mpn_fade_out;transition-timing-function:ease-in}.fb_customer_chat_bounce_in_v2{animation-duration:300ms;animation-name:fb_bounce_in_v2;transition-timing-function:ease-in}.fb_customer_chat_bounce_in_from_left{animation-duration:300ms;animation-name:fb_bounce_in_from_left;transition-timing-function:ease-in}.fb_customer_chat_bounce_out_v2{animation-duration:300ms;animation-name:fb_bounce_out_v2;transition-timing-function:ease-in}.fb_customer_chat_bounce_out_from_left{animation-duration:300ms;animation-name:fb_bounce_out_from_left;transition-timing-function:ease-in}.fb_invisible_flow{display:inherit;height:0;overflow-x:hidden;width:0}@keyframes fb_mpn_landing_page_slide_out{0%{margin:0 12px;width:100% - 24px}60%{border-radius:18px}100%{border-radius:50%;margin:0 24px;width:60px}}@keyframes fb_mpn_landing_page_slide_out_from_left{0%{left:12px;width:100% - 24px}60%{border-radius:18px}100%{border-radius:50%;left:12px;width:60px}}@keyframes fb_mpn_landing_page_slide_up{0%{bottom:0;opacity:0}100%{bottom:24px;opacity:1}}@keyframes fb_mpn_bounce_in{0%{opacity:.5;top:100%}100%{opacity:1;top:0}}@keyframes fb_mpn_fade_out{0%{bottom:30px;opacity:1}100%{bottom:0;opacity:0}}@keyframes fb_mpn_bounce_out{0%{opacity:1;top:0}100%{opacity:.5;top:100%}}@keyframes fb_bounce_in_v2{0%{opacity:0;transform:scale(0, 0);transform-origin:bottom right}50%{transform:scale(1.03, 1.03);transform-origin:bottom right}100%{opacity:1;transform:scale(1, 1);transform-origin:bottom right}}@keyframes fb_bounce_in_from_left{0%{opacity:0;transform:scale(0, 0);transform-origin:bottom left}50%{transform:scale(1.03, 1.03);transform-origin:bottom left}100%{opacity:1;transform:scale(1, 1);transform-origin:bottom left}}@keyframes fb_bounce_out_v2{0%{opacity:1;transform:scale(1, 1);transform-origin:bottom right}100%{opacity:0;transform:scale(0, 0);transform-origin:bottom right}}@keyframes fb_bounce_out_from_left{0%{opacity:1;transform:scale(1, 1);transform-origin:bottom left}100%{opacity:0;transform:scale(0, 0);transform-origin:bottom left}}@keyframes slideInFromBottom{0%{opacity:.1;transform:translateY(100%)}100%{opacity:1;transform:translateY(0)}}@keyframes slideInFromBottomDelay{0%{opacity:0;transform:translateY(100%)}97%{opacity:0;transform:translateY(100%)}100%{opacity:1;transform:translateY(0)}}</style></head><body style="padding: 154px 0px 0px;"><div class="container">
+    <div class="row">
+        
+    <div class="header-space-top">
+        <span></span>
+        <a class="logo" href="https://xuanthulab.net/" title="Kiến thức lập trình ứng dụng, Website, PHP,  Java, HTML, CSS">
+            <img alt="Kiến thức lập trình ứng dụng, Website, PHP,  Java, HTML, CSS" src="./Dependency injection (DI) trong C# với ServiceCollection_files/logo.png">
+        </a>
+        <div class="d-inline-block ml-auto">
+            <form method="post" class="m-2" action="https://xuanthulab.net/search/article/">
+                <div class="input-group">
+                    <input type="text" class="form-control box-search-top bg-dark border-dark text-warning" name="qsearch" placeholder="Tìm kiếm">
+                    <div class="input-group-append">
+                        <button class="btn btn-dark px-4" type="submit">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<nav class="navbar navbar-expand-md navbar-dark navbar-xtlab">
+    <a class="navbar-brand" href="https://xuanthulab.net/" title="Kiến thức lập trình ứng dụng, Website, PHP,  Java, HTML, CSS">Trang chủ</a>
+
+    <ul class="navbar-nav d-md-none flex-grow-1 flex-row alwaytop"><li class="nav-item"><a href="https://xuanthulab.net/lap-trinh-php/" class="nav-link">PHP</a></li><li class="nav-item"><a href="https://xuanthulab.net/contact/" class="nav-link">Liên hệ</a></li></ul>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#headermenuxtlab, #layout-menu" aria-controls="headermenuxtlab" aria-expanded="false" aria-label="Menu">
+        <i class="fa fa-bars" aria-hidden="true"></i>
+    </button>
+
+    <div class="collapse navbar-collapse" id="headermenuxtlab">
+        <ul class="navbar-nav"><li class="nav-item"><a href="https://xuanthulab.net/html/" class="nav-link">HTML</a></li><li class="nav-item"><a href="https://xuanthulab.net/css/" class="nav-link">CSS</a></li><li class="nav-item"><a href="https://xuanthulab.net/javascript/" class="nav-link">JavaScript</a></li><li class="nav-item"><a href="https://xuanthulab.net/lap-trinh-php/" class="nav-link">PHP</a></li><li class="nav-item"><a href="https://xuanthulab.net/server/" class="nav-link">Server</a></li><li class="nav-item"><a href="https://xuanthulab.net/java/" class="nav-link">Java</a></li><li class="nav-item"><a href="https://xuanthulab.net/tri-thuc-khoa-hoc/" class="nav-link">Tri thức</a></li><li class="nav-item"><a href="https://xuanthulab.net/sql/" class="nav-link">SQL</a></li><li class="nav-item active "><a href="https://xuanthulab.net/lap-trinh-c-co-ban/" class="nav-link">Lập trình C# Cơ bản</a></li></ul>        <span class="ml-auto invisible"></span>
+        <ul class="navbar-nav"><li class="nav-item"><a href="https://xuanthulab.net/contact/" class="nav-link">Liên hệ</a></li></ul>
+                    <span id="menu-user-dropdown-replace" class="collapse"></span>
+            </div>
+</nav>
+
+<script>
+    var DATAPOSTJSON = {'method':'dynamicinfo', 'id':1, 'params':{'routin':'GlobalFns'}};
+    ajaxcallapi(JSON.stringify(DATAPOSTJSON), '/api/', function (rt) {
+        if (rt.result.menuTopReplace != null) {
+            $('#menu-user-dropdown-replace').replaceWith(rt.result.menuTopReplace);
+        }
+    });
+</script>    </div>
+</div>
+
+<div class="container" style="height: auto !important;">
+    <div class="row" style="height: auto !important;">
+        <div class="col-3 layout-menu" id="layout-menu">
+            <div class="list-group row rounded-0 list-group-flush small" style="height: auto !important;"><a class="list-group-item p-0 pl-1 font30 bg-danger list-group-item-action text-light text-center" href="https://xuanthulab.net/lap-trinh-c-co-ban/">C# cơ bản .NET Core</a> <div id="menulession"><a href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#" class="list-group-item p-1  list-group-item-action list-group-item-warning" data-toggle="collapse" data-target="#lessionCollapse1" aria-expanded="true" aria-controls="menulession">
+                            <i class="fa fa-folder-o"></i> <strong>Phần 1 - Nhập môn C#</strong>
+                         </a><div id="lessionCollapse1" class="list-group-item row rounded-0 list-group-flush p-0 pl-3 collapse " aria-labelledby="headingOne" data-parent="#menulession">
+                            <div class="list-group rounded-0 list-group-flush">
+                                <a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/gioi-thieu-c-va-viet-chuong-trinh-cs-dau-tien.html"> § 1 Cài đặt, chương trình C# đầu tiên</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/top-level-statement-trong-lap-trinh-c-net-6.html"> § 2 Lưu ý khi sử dụng ví dụ với .NET 6</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/bien-hang-so-kieu-du-lieu-va-nhap-xuat-du-lieu-c-net-core.html"> § 3 Biến, kiểu dữ liệu và nhập/xuất</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/cac-toan-tu-tinh-toan-so-hoc-trong-c-toan-tu-gan-va-tang-giam.html"> § 4 Toán tử số học và gán</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/toan-tu-so-sanh-logic-va-cac-cau-lenh-if-switch-trong-c-net.html"> § 5 So sánh, logic và lệnh if, switch</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/vong-lap-trong-trong-c-for-do-while-va-cau-lenh-break-continue.html"> § 6 Vòng lặp for, while</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/mang-trong-lap-trinh-c-sharp.html"> § 7 Cấu trúc mảng, dữ liệu mảng</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/phuong-thuc-trong-lap-trinh-c-co-ban.html"> § 8 Phương thức - Method</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/code-c-chuyen-so-thanh-chu.html"> § 9 Chuyển số thành chữ</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/su-dung-lop-thuoc-tinh-trong-c-tao-va-su-dung-doi-tuong-lop.html"> § 10 Lớp - Class</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/khoi-tao-phuong-thuc-khoi-tao-trong-c-sharp.html"> § 11 Phương thức khởi tạo</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/kieu-gia-tri-va-kieu-tham-chieu-truyen-tham-so-tham-chieu-trong-c-sharp.html"> § 12 Kiểu giá trị, tham chiếu</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/chuoi-ky-tu-string-trong-c-sharp.html"> § 13 Chuỗi ký tự</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/su-dung-cau-truc-struct-va-kieu-liet-ke-enum-trong-lap-trinh-c-c-sharp.html"> § 14 Struct và Enum</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/tinh-ke-thua-trong-lap-trinh-c-c-sharp.html"> § 15 Tính kế thừa</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/namespace-trong-c-c-sharp-net-core.html"> § 16 Namespace</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/partial-type-va-nested-type-phan-code-thanh-nhieu-file-va-lop-long-nhau-trong-c-c-sharp.html"> § 17 Partial, Nested</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/su-dung-phuong-thuc-generic-lop-generic-trong-c-c-sharp.html"> § 18 Generic</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/kieu-vo-danh-va-kieu-dong-dynamic-trong-c-c-sharp.html"> § 19 Kiểu vô danh và dynamic</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/tim-hieu-va-su-dung-null-nullable-trong-lap-trinh-c-sharp.html"> § 20 null và nullable</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/tinh-da-hinh-phuong-thuc-ao-lop-truu-tuong-va-giao-dien-trong-lap-trinh-c-c-sharp.html"> § 21 Tính đa hình - abstract - interface</a>
+                            </div>
+                        </div><a href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#" class="list-group-item p-1  list-group-item-action list-group-item-success" data-toggle="collapse" data-target="#lessionCollapse2" aria-expanded="true" aria-controls="menulession">
+                            <i class="fa fa-folder-o"></i> <strong>Phần 2 - C# nâng cao</strong>
+                         </a><div id="lessionCollapse2" class="list-group-item row rounded-0 list-group-flush p-0 pl-3 collapse  show" aria-labelledby="headingOne" data-parent="#menulession">
+                            <div class="list-group rounded-0 list-group-flush">
+                                <a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/su-dung-delegate-trong-c-ham-uy-quyen.html"> § 22 Phương thức - Delegate</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/bieu-thuc-lambda-trong-c-su-dung-lambda-voi-delegate.html"> § 23 Biểu thức lambda</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/event-trong-c-cac-event-cua-net.html"> § 24 Event</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/cac-phuong-thuc-mo-rong-trong-c-c-sharp.html"> § 25 Phương thức mở rộng</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/mot-so-chu-de-lap-trinh-lop-c-nang-cao.html"> § 26 Hàm hủy - Quá tải toán tử - thành viên tĩnh - indexer</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/tim-hieu-va-su-dung-ngoai-le-exception-cau-lenh-try-catch-trong-c-c-sharp.html"> § 27 Ngoại lệ Exeption</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/su-dung-giao-dien-idisposable-va-tu-khoa-using-trong-c-sharp.html"> § 28 IDisposable - using</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/lam-viec-voi-file-co-ban-luu-va-doc-file-text-trong-c-c-sharp.html"> § 29 File cơ bản</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/stream-trong-c-lam-viec-voi-filestream-lap-trinh-c-sharp.html"> § 30 FileStream</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/collection-va-list-trong-c-c-sharp.html"> § 31 Collection - List</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/sortedlist-trong-lap-trinh-c-c-sharp.html"> § 32 SortedList</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/lop-queue-hang-doi-va-ngan-xep-stack-trong-c-c-sharp.html"> § 33 Queue / Stack</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/linkedlist-danh-sach-lien-ket-trong-c-c-sharp.html"> § 34 Linkedlist</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/lop-dictionary-hashset-trong-c-c-sharp.html"> § 35 Dictionary - HashSet</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/lop-observablecollection-trong-c-net.html"> § 36 ObservableCollection</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/linq-trong-lap-trinh-c-net-thuc-hinh-vi-du-linq.html"> § 37 LINQ</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/lap-trinh-bat-dong-bo-asynchronou-c-c-sharp-voi-bat-dong-bo-theo-mo-hinh-tac-vu.html"> § 38 (Multithreading) async - bất đồng bộ</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/lop-type-cach-doc-gia-tri-thuoc-tinh-cua-mot-lop.html"> § 39 Type</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/su-dung-attribute-annotation-trong-lap-trinh-c-csharp.html"> § 40 Attribute Annotation</a><a class="list-group-item p-1  list-group-item-danger" href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html"> § 41  DI Dependency Injection</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/lap-trinh-multi-thread-c-su-dung-parallel-chay-song-song-cac-tac-vu.html"> § 42 (Multithreading) Parallel</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/tao-thu-vien-c-net-core-va-chia-se-len-nuget-org.html"> § 43 Thư viện lớp</a>
+                            </div>
+                        </div><a href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#" class="list-group-item p-1  list-group-item-action list-group-item-warning" data-toggle="collapse" data-target="#lessionCollapse3" aria-expanded="true" aria-controls="menulession">
+                            <i class="fa fa-folder-o"></i> <strong>Phần 3 - Networking</strong>
+                         </a><div id="lessionCollapse3" class="list-group-item row rounded-0 list-group-flush p-0 pl-3 collapse " aria-labelledby="headingOne" data-parent="#menulession">
+                            <div class="list-group rounded-0 list-group-flush">
+                                <a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/lop-uri-dns-ping-va-cac-lop-ve-networking-trong-lap-trinh-c-net-core.html"> § 44 <strong class="text-danger">(Networking)</strong> Uri, Dns, Ping</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/networking-su-dung-httpclient-trong-c-tao-cac-truy-van-http.html"> § 45 <strong class="text-danger">(Networking)</strong> HttpClient</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/networking-su-dung-httpmessagehandler-cho-httpclient-trong-c-csharp.html"> § 46 <strong class="text-danger">(Networking)</strong> HttpMessageHandler</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/networking-su-dung-lop-httplistener-trong-c-de-tao-may-chu-web-http-don-gian.html"> § 47 <strong class="text-danger">(Networking)</strong> HttpListener</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/networking-giao-thuc-tcp-voi-cac-lop-tcplistener-tcpclient-va-cac-lop-uri-ipaddress-c-c-sharp.html"> § 48 <strong class="text-danger">(Networking)</strong> Tcp TcpListenerr/TcpClient</a>
+                            </div>
+                        </div><a href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#" class="list-group-item p-1  list-group-item-action list-group-item-warning" data-toggle="collapse" data-target="#lessionCollapse4" aria-expanded="true" aria-controls="menulession">
+                            <i class="fa fa-folder-o"></i> <strong>Phần 4 - Database - CSDL</strong>
+                         </a><div id="lessionCollapse4" class="list-group-item row rounded-0 list-group-flush p-0 pl-3 collapse " aria-labelledby="headingOne" data-parent="#menulession">
+                            <div class="list-group rounded-0 list-group-flush">
+                                <a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/ado-net-gioi-thieu-ado-net-va-ket-noi-sql-server-voi-sqlconnection.html"> § 49 <strong class="text-success">(ADO.NET)</strong> SqlConnection</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/ado-net-sqlcommand-truy-van-va-cap-nhat-du-lieu-c-sql-server.html"> § 50 <strong class="text-success">(ADO.NET)</strong> SqlCommand</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/ado-net-dataadapter-dataset-va-datatable-tim-hieu-va-su-dung.html"> § 51 <strong class="text-success">(ADO.NET)</strong> DataAdapter</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/ef-core-gioi-thieu-entity-framework-va-cach-su-dung-phan-co-ban-voi-c-csharp.html"> § 52 <strong class="text-primary">(EF Core)</strong> Tổng quan</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/ef-core-tao-model-trong-entity-framework-anh-xa-cac-doi-tuong-vao-database-c-csharp.html"> § 53 <strong class="text-primary">(EF Core)</strong> Tạo Model</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/ef-core-tao-quan-he-trong-entity-framework-voi-fluent-api-c-csharp.html"> § 54 <strong class="text-primary">(EF Core)</strong> Fluent API</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/ef-core-thuc-hien-cac-cau-truy-van-voi-entity-framework-c-csharp.html"> § 55 <strong class="text-primary">(EF Core)</strong> Query</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/ef-core-sinh-ra-cac-entity-tu-database-voi-cong-cu-dotnet-ef-trong-c-csharp.html"> § 56 <strong class="text-primary">(EF Core)</strong> Scaffold</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/ef-core-tao-migration-trong-entityframework-voi-c-csharp.html"> § 57 <strong class="text-primary">(EF Core)</strong> Migration</a>
+                            </div>
+                        </div><a href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#" class="list-group-item p-1  list-group-item-action list-group-item-warning" data-toggle="collapse" data-target="#lessionCollapse5" aria-expanded="true" aria-controls="menulession">
+                            <i class="fa fa-folder-o"></i> <strong>Phần 5 - ASP.NET CORE</strong>
+                         </a><div id="lessionCollapse5" class="list-group-item row rounded-0 list-group-flush p-0 pl-3 collapse " aria-labelledby="headingOne" data-parent="#menulession">
+                            <div class="list-group rounded-0 list-group-flush">
+                                <a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-core-tao-ung-dung-trang-web-dau-tien-c-csharp.html"> § 58 <strong class="text-info">(ASP.NET CORE)</strong> Hello World!</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-core-tao-middleware-va-dang-ky-vao-pipeline-cua-ung-dung-web-c-csharp.html"> § 59 <strong class="text-info">(ASP.NET CORE)</strong> Middleware</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-core-doc-va-ghi-request-va-response-xu-ly-truy-van-co-ban-upload-file-cookie-json.html"> § 60 <strong class="text-info">(ASP.NET CORE)</strong> Map - Request - Response</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-core-dang-ky-dich-vu-vao-iservicecollection-va-inject-cac-dich-vu-c-csharp.html"> § 61 <strong class="text-info">(ASP.NET CORE)</strong> IServiceCollection - MapWhen</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-core-su-dung-session-trong-ung-dung-web-c-csharp.html"> § 62 <strong class="text-info">(ASP.NET CORE)</strong> Session - ISession</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-core-cau-hinh-ung-dung-web-appsettings-json-va-inject-option-cho-cac-dich-vu-c-csharp.html"> § 63 <strong class="text-info">(ASP.NET CORE)</strong> Configuration</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-core-gui-mail-trong-ung-dung-web-asp-net.html"> § 64 <strong class="text-info">(ASP.NET CORE)</strong> Gửi Mail</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-core-su-dung-gulp-js-build-scss-sass-thanh-css.html"> § 65 <strong class="text-info">(ASP.NET CORE)</strong> SASS/SCSS</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-core-su-dung-cong-cu-libman-lay-thu-vien-client-side.html"> § 66 <strong class="text-info">(ASP.NET CORE)</strong> LibMan</a>
+                            </div>
+                        </div><a href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#" class="list-group-item p-1  list-group-item-action list-group-item-warning" data-toggle="collapse" data-target="#lessionCollapse6" aria-expanded="true" aria-controls="menulession">
+                            <i class="fa fa-folder-o"></i> <strong>Phần 6 - ASP.NET RAZOR</strong>
+                         </a><div id="lessionCollapse6" class="list-group-item row rounded-0 list-group-flush p-0 pl-3 collapse " aria-labelledby="headingOne" data-parent="#menulession">
+                            <div class="list-group rounded-0 list-group-flush">
+                                <a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-razor-gioi-thieu-razor-page-va-route-trong-razor-page.html"> § 67 <strong class="text-primary">(ASP.NET RAZOR)</strong> Khởi tạo và Route</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/cu-phap-trong-trang-razor-page-asp-net-core.html"> § 68 <strong class="text-primary">(ASP.NET RAZOR)</strong> Cú pháp Razor</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-razor-layout-trong-asp-net-core-c-sharp.html"> § 69 <strong class="text-primary">(ASP.NET RAZOR)</strong> Layout trong ASP.NET Core</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-razor-su-dung-partial-page-partial-view-de-chia-nho-layout-trang-razor.html"> § 70 <strong class="text-primary">(ASP.NET RAZOR)</strong> Partial</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-razor-tao-va-su-dung-viewcomponent.html"> § 71 <strong class="text-primary">(ASP.NET RAZOR)</strong> ViewComponent</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-razor-mot-so-taghelper-xay-dung-taghelper-rieng.html"> § 72 <strong class="text-primary">(ASP.NET RAZOR)</strong> TagHelper</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-razor-lop-htmlhelper-tao-html-trong-razor.html"> § 73 <strong class="text-primary">(ASP.NET RAZOR)</strong> HtmlHelper</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-razor-su-dung-pagemodel-code-behind-cho-razor-page-va-cac-hander-co-ban.html"> § 74 <strong class="text-primary">(ASP.NET RAZOR)</strong> PageModel</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-razor-model-binding-tu-dong-anh-xa-du-lieu-gui-den-vao-model-c-asp-net-core.html"> § 75 <strong class="text-primary">(ASP.NET RAZOR)</strong> Model Binding</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-razor-html-form-va-validation-kiem-tra-du-lieu.html"> § 76 <strong class="text-primary">(ASP.NET RAZOR)</strong> HTML Form, Validation</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-razor-upload-file-trong-razor-page-voi-iformfile.html"> § 77 <strong class="text-primary">(ASP.NET RAZOR)</strong> Upload File</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-razor-ung-dung-ef-lam-viec-voi-co-so-du-lieu.html"> § 78 <strong class="text-primary">(ASP.NET RAZOR)</strong> Entity Framework</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-razor-tao-partial-phan-trang-html-bootstrap-trong-asp-net-truy-van-phan-trang-linq.html"> § 79 <strong class="text-primary">(ASP.NET RAZOR)</strong> Paging</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-razor-su-dung-identity-de-tao-user-xac-thuc-dang-nhap-website.html"> § 80 <strong class="text-primary">(ASP.NET RAZOR)</strong> Identity (1) - Register, Login, Logout</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-razor-tinh-nang-lockout-va-lay-lai-mat-khau-trong-identity.html"> § 81 <strong class="text-primary">(ASP.NET RAZOR)</strong> Identity (2) Lockout, Reset Password</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-razor-su-dung-tai-khoan-google-de-xac-thuc-trong-identity.html"> § 82 <strong class="text-primary">(ASP.NET RAZOR)</strong> Identity (3) Google Login</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-razor-su-dung-facebook-de-xac-thuc-dang-nhap-trong-identity.html"> § 83 <strong class="text-primary">(ASP.NET RAZOR)</strong> Identity (4) Facebook Login</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-razor-cac-trang-quan-ly-tai-khoan-ca-nhan-trong-identity.html"> § 84 <strong class="text-primary">(ASP.NET RAZOR)</strong> Identity (5) profile, password, email ...</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-razor-xay-dung-chuc-nang-quan-ly-role-gan-role-cho-user-trong-asp-net.html"> § 85 <strong class="text-primary">(ASP.NET RAZOR)</strong> Identity (6) Role</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-razor-su-dung-thuoc-tinh-authorize-chung-thuc-quyen-truy-cap-theo-role.html"> § 86 <strong class="text-primary">(ASP.NET RAZOR)</strong> Identity (7) Role-based Authorization</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-razor-chung-thuc-quyen-cua-user-theo-roleclaim.html"> § 87 <strong class="text-primary">(ASP.NET RAZOR)</strong> Identity (8) RoleClaim</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/tao-cac-requirement-va-authorization-handler-chung-thuc-quyen-truy-cap-authorize-trong-asp-net-core.html"> § 88 <strong class="text-primary">(ASP.NET RAZOR)</strong> Identity (9) Authorization Handler</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-razor-su-dung-iauthorizationservice-chung-thuc-quyen-identity.html"> § 89 <strong class="text-primary">(ASP.NET RAZOR)</strong> IAuthorizationService</a>
+                            </div>
+                        </div><a href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#" class="list-group-item p-1  list-group-item-action list-group-item-warning" data-toggle="collapse" data-target="#lessionCollapse7" aria-expanded="true" aria-controls="menulession">
+                            <i class="fa fa-folder-o"></i> <strong>Phần 7 - ASP.NET MVC</strong>
+                         </a><div id="lessionCollapse7" class="list-group-item row rounded-0 list-group-flush p-0 pl-3 collapse " aria-labelledby="headingOne" data-parent="#menulession">
+                            <div class="list-group rounded-0 list-group-flush">
+                                <a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-core-mvc-tao-ung-dung-mvc-dau-tien-c-csharp.html"> § 90 <strong class="text-danger">(ASP.NET MVC)</strong> Controller - View</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-core-mvc-chi-tiet-ve-route-trong-asp-net-mvc.html"> § 91 <strong class="text-danger">(ASP.NET MVC)</strong> Route</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-core-mvc-tich-hop-entity-framework-va-identity.html"> § 92 <strong class="text-danger">(ASP.NET MVC)</strong> EF, Identity</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-core-mvc-binding-va-validation-du-lieu-submit-trong-asp-net.html"> § 93 <strong class="text-danger">(ASP.NET MVC)</strong> Binding, Validation</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-core-mvc-xay-dung-ung-dung-mau-danh-muc-cua-blog-phan-1.html"> § 94 <strong class="text-danger">(ASP.NET MVC)</strong> Xây dựng Website(1)</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-core-mvc-xay-dung-ung-dung-mau-tich-hop-html-editor-summernote-phan-2.html"> § 95 <strong class="text-danger">(ASP.NET MVC)</strong> Xây dựng Website(2)</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-core-mvc-xay-dung-ung-dung-mau-cac-bai-post-cua-blog-phan-3.html"> § 96 <strong class="text-danger">(ASP.NET MVC)</strong> Xây dựng Website(3)</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-core-mvc-xay-dung-ung-dung-mau-trang-hien-thi-cac-bai-viet-phan-4.html"> § 97 <strong class="text-danger">(ASP.NET MVC)</strong> Xây dựng Website(4)</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-core-mvc-xay-dung-gio-hang-cart-voi-net-core.html"> § 98 <strong class="text-danger">(ASP.NET MVC)</strong> Giỏ hàng - Cart (5)</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-core-mvc-tich-hop-trinh-quan-ly-file-vao-website.html"> § 99 <strong class="text-danger">(ASP.NET MVC)</strong> elFinder (5)</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-core-mvc-gioi-thieu-mot-so-admin-template-va-tich-hop-sb-admin.html"> § 100 <strong class="text-danger">(ASP.NET MVC)</strong> SB Admin (6)</a><a class="list-group-item p-1 pl-1  list-group-item-action list-group-item-success" href="https://xuanthulab.net/asp-net-core-mvc-trien-khai-ung-dung-asp-net-tren-server-linux-voi-kestrel-apache-nginx.html"> § 101 <strong class="text-danger">(ASP.NET MVC)</strong> Kestrel, publish</a>
+                            </div>
+                        </div></div><div class="google-auto-placed" style="width: 100%; height: auto !important; clear: both; text-align: center;"><ins data-ad-format="auto" class="adsbygoogle adsbygoogle-noablate" data-ad-client="ca-pub-4170344512131207" data-adsbygoogle-status="done" style="display: block; margin: 10px auto; background-color: transparent; height: 280px;" data-ad-status="filled"><div id="aswift_5_host" style="border: none; height: 280px; width: 349px; margin: 0px; padding: 0px; position: relative; visibility: visible; background-color: transparent; display: inline-block; overflow: visible;"><iframe id="aswift_5" name="aswift_5" browsingtopics="true" style="left:0;position:absolute;top:0;border:0;width:349px;height:280px;" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" width="349" height="280" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allow="attribution-reporting; run-ad-auction" src="./Dependency injection (DI) trong C# với ServiceCollection_files/ads.html" data-google-container-id="a!6" tabindex="0" title="Advertisement" aria-label="Advertisement" data-google-query-id="COeo5omp5oUDFYzfFgUdphoG1A" data-load-complete="true"></iframe></div></ins></div></div><ul class="child-navigator root-tag-menu">
+<li>
+<a href="https://xuanthulab.net/lap-trinh-php/">Lập trình PHP</a>
+<ul>
+<li>
+<a href="https://xuanthulab.net/psr/">PSR</a>
+</li>
+<li>
+<a href="https://xuanthulab.net/laminas/">Laminas</a>
+</li>
+<li>
+<a href="https://xuanthulab.net/spl/">SPL</a>
+</li>
+<li>
+<a href="https://xuanthulab.net/xenforo/">Xenforo</a>
+</li>
+<li>
+<a href="https://xuanthulab.net/zend-framework/">Zend Framework</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="https://xuanthulab.net/lap-trinh-ung-dung-ios-swift/">Lập trình ứng dụng iOS - Swift</a>
+</li>
+<li>
+<a href="https://xuanthulab.net/ruby/">Ruby</a>
+<ul>
+<li>
+<a href="https://xuanthulab.net/sketchup/">Sketchup</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="https://xuanthulab.net/lap-trinh-dart-flutter/">Lập trình Dart - Flutter</a>
+</li>
+<li>
+<a href="https://xuanthulab.net/lap-trinh-c-c-sharp/">Lập trình C# (C Sharp)</a>
+<ul>
+<li>
+<a href="https://xuanthulab.net/lap-trinh-c-co-ban/" class="hotactive">Lập trình C# Cơ bản</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="https://xuanthulab.net/server/">Server</a>
+<ul>
+<li>
+<a href="https://xuanthulab.net/mysql-server/">MySql Server</a>
+</li>
+<li>
+<a href="https://xuanthulab.net/windows/">Windows</a>
+</li>
+<li>
+<a href="https://xuanthulab.net/apache/">Apache</a>
+</li>
+<li>
+<a href="https://xuanthulab.net/php/">PHP</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="https://xuanthulab.net/html/">HTML</a>
+</li>
+<li>
+<a href="https://xuanthulab.net/javascript/">Javascript</a>
+<ul>
+<li>
+<a href="https://xuanthulab.net/jquery/">JQuery</a>
+</li>
+<li>
+<a href="https://xuanthulab.net/typescript-angular/">TypeScript - Angular</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="https://xuanthulab.net/css/">CSS</a>
+<ul>
+<li>
+<a href="https://xuanthulab.net/su-dung-sass-scss/">Sử dụng SASS / SCSS</a>
+</li>
+<li>
+<a href="https://xuanthulab.net/bootstrap-css-framework/">Bootstrap - CSS Framework</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="https://xuanthulab.net/sql/">SQL</a>
+<ul>
+<li>
+<a href="https://xuanthulab.net/sql-server-net-framework-c/">SQL Server ( .NET Framework - C#)</a>
+</li>
+<li>
+<a href="https://xuanthulab.net/ms-access/">MS Access</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="https://xuanthulab.net/java/">Java</a>
+<ul>
+<li>
+<a href="https://xuanthulab.net/android-java/">Android Java</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="https://xuanthulab.net/thuat-ngu-cac-van-de-co-ban/">Thuật ngữ - Các vấn đề cơ bản</a>
+</li>
+<li>
+<a href="https://xuanthulab.net/tools/">Tools</a>
+<ul>
+<li>
+<a href="https://xuanthulab.net/git-va-github/">Git và GitHub</a>
+</li>
+<li>
+<a href="https://xuanthulab.net/kubernetes/">Kubernetes</a>
+</li>
+<li>
+<a href="https://xuanthulab.net/mathematica/">Mathematica</a>
+</li>
+<li>
+<a href="https://xuanthulab.net/ssh-secure-shell/">SSH - Secure Shell</a>
+</li>
+<li>
+<a href="https://xuanthulab.net/grunt/">Grunt</a>
+</li>
+<li>
+<a href="https://xuanthulab.net/elasticsearch/">Elasticsearch</a>
+</li>
+<li>
+<a href="https://xuanthulab.net/docker/">Docker</a>
+</li>
+<li>
+<a href="https://xuanthulab.net/macos/">macOS</a>
+</li>
+<li>
+<a href="https://xuanthulab.net/english-study/">English Study</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="https://xuanthulab.net/tin-tuc-cong-nghe/">Tin tức công nghệ</a>
+</li>
+<li>
+<a href="https://xuanthulab.net/tri-thuc-khoa-hoc/">Tri thức &amp; Khoa học</a>
+<ul>
+<li>
+<a href="https://xuanthulab.net/yoga/">Yoga</a>
+</li>
+</ul>
+</li>
+</ul>        </div>
+        <div class="google-auto-placed" style="width: 100%; height: auto !important; clear: none; text-align: center;"><ins data-ad-format="auto" class="adsbygoogle adsbygoogle-noablate" data-ad-client="ca-pub-4170344512131207" data-adsbygoogle-status="done" style="display: block; margin: 10px auto; background-color: transparent; height: 0px;" data-ad-status="unfilled"><div id="aswift_6_host" style="border: none; height: 0px; width: 1200px; margin: 0px; padding: 0px; position: relative; visibility: visible; background-color: transparent; display: inline-block; overflow: hidden; opacity: 0;"><iframe id="aswift_6" name="aswift_6" browsingtopics="true" style="left: 0px; position: absolute; top: 0px; border: 0px; width: 1200px; height: 0px;" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" width="1200" height="0" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allow="attribution-reporting; run-ad-auction" src="./Dependency injection (DI) trong C# với ServiceCollection_files/ads(1).html" data-google-container-id="a!7" tabindex="0" title="Advertisement" aria-label="Advertisement" data-google-query-id="CMLr5omp5oUDFTraFgUdMcoPEQ" data-load-complete="true"></iframe></div></ins></div><div class="col-9 layout-post" style="height: auto !important; min-height: 0px !important;">
+                <nav class="breadcrumbnav"><ul class="breadcrumb" vocab="https://schema.org/" typeof="BreadcrumbList"><li class="breadcrumb-item" property="itemListElement" typeof="ListItem">
+                  <a property="item" typeof="WebPage" href="https://xuanthulab.net/lap-trinh-c-c-sharp/">
+                    <span property="name">Lập trình C# (C Sharp)</span>
+                  </a>
+                <meta property="position" content="1"></li><li class="breadcrumb-item" property="itemListElement" typeof="ListItem">
+                  <a property="item" typeof="WebPage" href="https://xuanthulab.net/lap-trinh-c-co-ban/">
+                    <span property="name">Lập trình C# Cơ bản</span>
+                  </a>
+                <meta property="position" content="2"></li></ul></nav><a class="badge badge-warning" href="https://xuanthulab.net/lap-trinh-c-c-sharp/">Lập trình C# (C Sharp)</a>
+<div class="row w-100"><div class="text-right col-6">
+                     
+                    <a class="display-4 font20 text-danger" href="https://xuanthulab.net/su-dung-attribute-annotation-trong-lap-trinh-c-csharp.html">
+                    Attribute Annotation</a> <i class="fa fa-chevron-circle-left"></i> (Bài trước) </div><div class="col-6">
+                    (Bài tiếp) <i class="fa fa-chevron-circle-right"></i>
+                    <a class="display-4 font20 text-danger" href="https://xuanthulab.net/lap-trinh-multi-thread-c-su-dung-parallel-chay-song-song-cac-tac-vu.html">
+                    (Multithreading) Parallel 
+                    </a></div></div>
+
+<div class="page-header">
+    <h1>Dependency injection (DI) trong C# với ServiceCollection</h1>
+    <p class="lead">Khái niệm về DI,  các kiểu Inject, sử dụng DI container mặc định của NET ServiceCollection, khởi tạo dịch vụ với Factory, hàm khởi tạo, Inject thiết lập và sử dụng config file định dạng JSON cấu hình để thiết lập thuộc tính đối tượng</p>
+</div>
+<div class="main-post" style="height: auto !important;">
+    <script async="" src="./Dependency injection (DI) trong C# với ServiceCollection_files/f(7).txt"></script>
+    <!-- XUANTHULAB1 -->
+    <ins class="adsbygoogle" style="display: block; height: 280px;" data-ad-client="ca-pub-4170344512131207" data-ad-slot="6971440560" data-ad-format="auto" data-full-width-responsive="true" data-adsbygoogle-status="done" data-ad-status="filled"><div id="aswift_1_host" style="border: none; height: 280px; width: 1020px; margin: 0px; padding: 0px; position: relative; visibility: visible; background-color: transparent; display: inline-block; overflow: visible;"><iframe id="aswift_1" name="aswift_1" browsingtopics="true" style="left:0;position:absolute;top:0;border:0;width:1020px;height:280px;" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" width="1020" height="280" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allow="attribution-reporting; run-ad-auction" src="./Dependency injection (DI) trong C# với ServiceCollection_files/ads(2).html" data-google-container-id="a!2" tabindex="0" title="Advertisement" aria-label="Advertisement" data-google-query-id="CKfdtYmp5oUDFRHTFgUdv9wN-Q" data-load-complete="true"></iframe></div></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+    <ul class="list-group list-group-flush"><li class="list-group-item p-0"><a href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#InversionofControl"><strong>Inversion of Control</strong></a></li><li class="list-group-item p-0"><a href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#Dependencyinjection"><strong>Dependency injection</strong></a></li><li class="list-group-item p-0"><a href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#nodi"><i>Không áp dụng kỹ thuật DI</i></a></li><li class="list-group-item p-0"><a href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#di"><i>Áp dụng kỹ thuật DI</i></a></li><li class="list-group-item p-0"><a href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#dis"><strong>Những kiểu DI</strong></a></li><li class="list-group-item p-0"><a href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#DICONTAINER"><strong>DI Container</strong></a></li><li class="list-group-item p-0"><a href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#ServiceCollection"><i>Lớp ServiceCollection</i></a></li><li class="list-group-item p-0"><a href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#ServiceProvider"><i>Lớp ServiceProvider</i></a></li><li class="list-group-item p-0"><a href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#UseServiceCollection"><i>Sử dụng DI cơ bản</i></a></li><li class="list-group-item p-0"><a href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#Factory"><i>Sử dụng Delegate / Factor để đăng ký dịch vụ</i></a></li><li class="list-group-item p-0"><a href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#Options"><i>Sử dụng Options khởi tạo dịch vụ</i></a></li><li class="list-group-item p-0"><a href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#configfile"><i>Sử dụng cấu hình từ file thiết lập</i></a></li></ul>
+    <a id="InversionofControl" name="InversionofControl"></a>
+    <h2 class="display-4 text-success font30">Inversion of Control (IoC) / Dependency inversion</h2>
+    <p><strong>Inversion of Control</strong> (IoC - Đảo ngược điều khiển) là một nguyên lý thiết kế trong công nghệ phần mềm
+        trong đó các thành phần nó dựa vào để làm việc bị đảo ngược quyền điều khiển
+        khi so sánh với lập trình hướng thủ thục truyền thống.</p>
+
+
+ <div class="embed-responsive embed-responsive-16by9">
+    <iframe src="./Dependency injection (DI) trong C# với ServiceCollection_files/0FrfMGB8Wq8.html" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen=""></iframe>
+</div>
+
+
+    <p>Khi áp dụng cho các đối tượng lớp (dịch vụ) có thể gọi nó là <strong>Dependency inversion</strong>
+    (đảo ngược phụ thuộc), để diễn giải trước tiên cần nắm rõ khái niệm <strong>Dependency</strong> (phụ thuộc)</p>
+    <p class="alert alert-danger">
+        <strong>dependency</strong> :
+        Giả sử bạn có một lớp <strong class="text-danger">classA</strong>,
+        lớp này có sử dụng một chức năng từ đối
+    tượng lớp <strong class="text-danger">classB</strong> (classA hoạt động dựa vào classB). Lúc đó
+    <strong class="text-danger">classB</strong> gọi là <strong>phụ thuộc (dependency)</strong> <i>(của classA)</i></p>
+    <h3 class="text-primary">Thiết kế truyền thống - tham chiếu trực tiếp đến Dependency</h3>
+    <p>Có lớp <i>class A</i> có sử dụng một chức năng (gọi hàm ào đó) của <i>class B</i>,
+    lớp <i>class B</i> lại tham chiếu và gọi các chức năng có trong <i>class C</i>.
+    Ta thấy <i>class A</i> dựa vào <i>class B</i> để hoạt động, <i>class B</i>
+        dựa vào <i>class C</i>. Nếu vậy khi thiết kế theo cách thông thường, viết code thì
+        <i>class A</i> có tham chiếu trực tiếp (cứng) đến <i>class B</i> và trong <i>class B</i> có tham
+    chiếu đến <i>class C</i> (thể hiện như hình dưới).</p>
+    <img src="./Dependency injection (DI) trong C# với ServiceCollection_files/di-01.png" alt="di tham chiếu dependency trực tiếp" style="max-width: 500px">
+    <p>Sự phụ thuộc đối tượng này vào đối tượng khác ở thời điểm viết code và thời điểm thực thi là hoàn toàn giống nhau.</p>
+<pre class="prettyprint lang-cs hljs language-csharp"><span class="hljs-keyword">class</span> <span class="hljs-title">ClassC</span> {
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ActionC</span>()</span> =&gt; Console.WriteLine(<span class="hljs-string">"Action in ClassC"</span>);
+}
+
+<span class="hljs-keyword">class</span> <span class="hljs-title">ClassB</span> {
+    <span class="hljs-comment">// Phụ thuộc của ClassB là ClassC</span>
+    ClassC c_dependency;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">ClassB</span>(<span class="hljs-params">ClassC classc</span>)</span> =&gt; c_dependency = classc;
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ActionB</span>()</span>
+    {
+        Console.WriteLine(<span class="hljs-string">"Action in ClassB"</span>);
+        c_dependency.ActionC();
+    }
+}
+
+<span class="hljs-keyword">class</span> <span class="hljs-title">ClassA</span> {
+    <span class="hljs-comment">// Phụ thuộc của ClassA là ClassB</span>
+    ClassB b_dependency;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">ClassA</span>(<span class="hljs-params">ClassB classb</span>)</span> =&gt; b_dependency = classb;
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ActionA</span>()</span>
+    {
+        Console.WriteLine(<span class="hljs-string">"Action in ClassA"</span>);
+        b_dependency.ActionB();
+    }
+}
+</pre>
+<p>Khi sử dụng:</p>
+<pre class="prettyprint lang-cs hljs language-csharp">ClassC objectC = <span class="hljs-keyword">new</span> ClassC();
+ClassB objectB = <span class="hljs-keyword">new</span> ClassB(objectC);
+ClassA objectA = <span class="hljs-keyword">new</span> ClassA(objectB);
+
+objectA.ActionA();
+
+<span class="hljs-comment">// Kết quả:</span>
+<span class="hljs-comment">// Action in ClassA</span>
+<span class="hljs-comment">// Action in ClassB</span>
+<span class="hljs-comment">// Action in ClassC</span>
+</pre>
+    <h3 class="text-primary">Thiết kế theo cách đảo ngược phụ thuộc Inverse Dependency</h3>
+    <p>Cách viết code này, ở thời điểm thực thi thì <i>class A</i> vẫn gọi được hàm có <i>class B</i>,
+    <i>class B</i> vẫn gọi hàm có <i>class C</i> nghĩa là kết quả không đổi. Tuy nhiên, khi thiết kế ở thời điểm viết code
+    (trong code) <i>class A</i> không tham chiếu trực tiếp đến <i>class B</i> mà nó lại sử dụng <strong>interface</strong>
+    (hoặc lớp <strong>abstruct</strong>) mà <i>classB</i> triển khai. Điều này dẫn tới sự phụ thuộc <strong>lỏng lẻo</strong>
+    giữa <i>classA</i> và <i>classB</i> (xem hình)</p>
+
+    <img src="./Dependency injection (DI) trong C# với ServiceCollection_files/di-02.png" alt="di tham chiếu dependency một cách lỏng lẻo" style="max-width: 800px">
+
+    <p>Khi thực thi, <i>classB</i> có thể được thay thế bởi bất kỳ lớp nào triển khai từ giao điện <i>interface B</i>,
+    <i>classB</i> cụ thể mà <i>classA</i> sử dụng được <strong>quyết định và điểu khiển</strong> bởi <i>interface B</i>
+    (điều này có nghĩa tại sao gọi là đảo ngược phụ thuộc)</p>
+<pre class="prettyprint lang-cs hljs language-csharp"><span class="hljs-keyword">interface</span> <span class="hljs-title">IClassB</span> {
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ActionB</span>()</span>;
+}
+<span class="hljs-keyword">interface</span> <span class="hljs-title">IClassC</span> {
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ActionC</span>()</span>;
+}
+
+<span class="hljs-keyword">class</span> <span class="hljs-title">ClassC</span> : <span class="hljs-title">IClassC</span> {
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">ClassC</span>()</span> =&gt; Console.WriteLine (<span class="hljs-string">"ClassC is created"</span>);
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ActionC</span>()</span> =&gt; Console.WriteLine(<span class="hljs-string">"Action in ClassC"</span>);
+}
+
+<span class="hljs-keyword">class</span> <span class="hljs-title">ClassB</span> : <span class="hljs-title">IClassB</span> {
+    IClassC c_dependency;
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">ClassB</span>(<span class="hljs-params">IClassC classc</span>)</span>
+    {
+        c_dependency = classc;
+        Console.WriteLine(<span class="hljs-string">"ClassB is created"</span>);
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ActionB</span>()</span>
+    {
+        Console.WriteLine(<span class="hljs-string">"Action in ClassB"</span>);
+        c_dependency.ActionC();
+    }
+}
+
+
+<span class="hljs-keyword">class</span> <span class="hljs-title">ClassA</span> {
+    IClassB b_dependency;
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">ClassA</span>(<span class="hljs-params">IClassB classb</span>)</span>
+    {
+        b_dependency = classb;
+        Console.WriteLine(<span class="hljs-string">"ClassA is created"</span>);
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ActionA</span>()</span>
+    {
+        Console.WriteLine(<span class="hljs-string">"Action in ClassA"</span>);
+        b_dependency.ActionB();
+    }
+}
+</pre>
+<p>Kết quả sử dụng khi chạy là tương tự</p>
+<pre class="prettyprint lang-cs hljs language-csharp">IClassC objectC = <span class="hljs-keyword">new</span> ClassC();
+IClassB objectB = <span class="hljs-keyword">new</span> ClassB(objectC);
+ClassA objectA = <span class="hljs-keyword">new</span> ClassA(objectB);
+
+objectA.ActionA();
+</pre>
+<p>Code dễ dàng thay các phụ thuộc, ví dụ, định nghĩa thêm:</p>
+<pre class="prettyprint lang-cs hljs language-csharp"><span class="hljs-keyword">class</span> <span class="hljs-title">ClassC1</span> : <span class="hljs-title">IClassC</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">ClassC1</span>()</span> =&gt; Console.WriteLine (<span class="hljs-string">"ClassC1 is created"</span>);
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ActionC</span>()</span>
+    {
+        Console.WriteLine(<span class="hljs-string">"Action in C1"</span>);
+    }
+}
+
+<span class="hljs-keyword">class</span> <span class="hljs-title">ClassB1</span> : <span class="hljs-title">IClassB</span>
+{
+    IClassC c_dependency;
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">ClassB1</span>(<span class="hljs-params">IClassC classc</span>)</span>
+    {
+        c_dependency = classc;
+        Console.WriteLine(<span class="hljs-string">"ClassB1 is created"</span>);
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ActionB</span>()</span>
+    {
+        Console.WriteLine(<span class="hljs-string">"Action in B1"</span>);
+        c_dependency.ActionC();
+    }
+}
+</pre>
+<p>Khi sử dụng, có thể thay thế các dependency tùy thuộc vào mục đích sử dụng:</p>
+<pre class="prettyprint lang-cs hljs language-csharp">IClassC objectC = <span class="hljs-keyword">new</span> ClassC1();            <span class="hljs-comment">// new ClassC();</span>
+IClassB objectB = <span class="hljs-keyword">new</span> ClassB1(objectC);     <span class="hljs-comment">// new ClassB();</span>
+ClassA objectA = <span class="hljs-keyword">new</span> ClassA(objectB);
+
+objectA.ActionA();
+</pre>
+
+
+
+    <div class="row">
+    <div class="col" style="background-color: #ff572236">
+
+        <a id="Dependencyinjection" name="Dependencyinjection"></a>
+        <h2 class="display-4 text-success font30">Kỹ thuật lập trình Dependency injection</h2>
+
+        <p><strong>Dependency injection (DI)</strong> là một kỹ thuật trong lập trình, nó là một hình thức cụ thể của
+            <strong>Inverse of Control (Dependency Inverse)</strong> đã nói ở trên.
+            <strong>DI</strong> thiết kế sao cho các dependency (phụ thuộc) của một đối tượng <strong>CÓ THỂ</strong> được đưa vào, tiêm vào
+            đối tượng đó (Injection) khi nó cần tới (khi đối tượng khởi tạo). Cụ thể cần làm:
+        </p>
+        <ul>
+            <li>Xây dựng các lớp (dịch vụ) có sự phụ thuộc nhau một cách lỏng lẻo, và dependency có thể tiêm vào
+            đối tượng (injection) - thường qua phương thức khởi tạo constructor, property, setter</li>
+            <li>Xây dựng được một thư viện có thể tự động tạo ra các đối tượng, các dependency tiêm vào đối tượng đó,
+            thường là áp dụng kỹ thuật Reflection của C# (xem thêm
+                <a href="https://xuanthulab.net/lop-type-cach-doc-gia-tri-thuoc-tinh-cua-mot-lop.html" target="_blank">lớp type</a>):
+            Thường là thư viện này quá phức tạp để tự phát triển nên có thể sử dụng các thư viện có sẵn như:
+                <a href="https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/" target="_blank">
+                    Microsoft.Extensions.DependencyInjection</a> hoặc thư viện bên thứ ba như
+                <a href="https://github.com/castleproject/Windsor" target="_blank">Windsor</a>,
+                <a href="https://github.com/unitycontainer/unity" target="_blank">Unity</a>
+                <a href="https://github.com/ninject/ninject" target="_blank">Ninject</a> ...
+
+            </li>
+        </ul>
+
+        <p>Nói chung, các khái niệm về DI rất trừu tượng và khó hiểu! Để rõ hơn cần thực hiện từng bước qua các ví dụ.</p>
+        <p>Giả sử có lớp <code>Car</code> có chức năng (phương thức) <code>Beep()</code> - để phát ra tiếng
+            còi xe, mà để phát ra tiếng còi - nó lại dựa vào vào lớp <code>Horn</code> chuyên tạo ra tiếng còi
+            - lúc đó ta nói lớp <code>Car</code> có một phụ thuộc (dependency Horn) là lớp Horn, Horn là
+            dependency của Car.</p>
+        <p>
+            Muốn lớp Car hoạt động thì nó phải có đối tượng (dịch vụ) từ Horn. Vậy khi thiết kế, thường có hai cách:
+        </p>
+        <ul>
+            <li>Trong lớp Car thiết kế code mà nó phụ thuộc cứng vào lớp Horn - tự khởi tạo Horn,
+                cách thiết kế này không có khả năng áp dụng kỹ thuật DI</li>
+            <li>Trong lớp Car, dependency Horn không do Car trực tiếp khởi tạo mà nó được đưa vào qua phương thức khởi tạo,
+            qua setter, qua gán property. Các thiết kế này linh hoạt và có <strong>KHẢ NĂNG</strong> để áp dụng DI</li>
+        </ul>
+
+        <p>Ví dụ code cho 2 trường hợp này như sau:</p>
+
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col" style="background-color: #3f51b536">
+        <a id="nodi" name="nodi"></a>
+        <h3 class="text-primary font25">Viết Code mà không có khả năng áp dụng DI</h3>
+        <pre class="prettyprint lang-cs bg-transparent hljs language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Horn</span> {
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Beep</span> ()</span> =&gt; Console.WriteLine (<span class="hljs-string">"Beep - beep - beep ..."</span>);
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Car</span> {
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Beep</span> ()</span> {
+        <span class="hljs-comment">// chức năng Beep xây dựng có định với Horn</span>
+        <span class="hljs-comment">// tự tạo đối tượng horn (new) và dùng nó</span>
+        Horn horn = <span class="hljs-keyword">new</span> Horn ();
+        horn.Beep ();
+    }
+}
+</pre>
+        <hr>
+        <p>Code viết như trên khá thông dụng và vẫn chạy tốt. Bấm còi xe vẫn kêu Beep, beep ...</p>
+        <pre class="prettyprint lang-cs bg-transparent hljs language-csharp"><span class="hljs-keyword">var</span> car = <span class="hljs-keyword">new</span> Car();
+car.Beep();         <span class="hljs-comment">// Beep - beep - beep ...</span></pre>
+        <p>Nhưng code trên có một vấn đề là tính linh hoạt khi sử dụng. Chức năng <code>Beep()</code>
+            của <code>Car</code> nó tự tạo ra đối tượng <code>Horn</code> và sử dụng nó - làm cho
+            Car gắn cứng vào Horn với cấu trúc khởi tạo hiện thời.</p>
+        <p>Nếu lớp Horn sửa lại, ví dụ muốn khởi tạo Horn phải chỉ ra một tham số nào đó, ví dụ
+            như độ lớn tiêng còi <code>level</code></p>
+        <hr>
+        <pre class="prettyprint lang-cs bg-transparent hljs language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Horn</span> {
+    <span class="hljs-built_in">int</span> level; <span class="hljs-comment">// độ lớn của còi xe</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Horn</span> (<span class="hljs-params"><span class="hljs-built_in">int</span> level</span>)</span> =&gt; <span class="hljs-keyword">this</span>.level = level; <span class="hljs-comment">// thêm khởi tạo level</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Beep</span> ()</span> =&gt; Console.WriteLine (<span class="hljs-string">$"(level <span class="hljs-subst">{level}</span>) Beep - beep - beep ..."</span>);
+}
+</pre>
+        <p>Việc thay đổi <code>Horn</code> làm cho <code>Car</code> không còn dùng được nữa, nếu
+            muốn <code>Car</code> hoạt động cần sửa lại code của Car, ví dụ tại Beep sửa thành</p>
+        <pre class="prettyprint lang-cs bg-transparent hljs language-csharp">Horn horn = <span class="hljs-keyword">new</span> Horn(<span class="hljs-number">10</span>);     <span class="hljs-comment">// Khởi tạo với Horn với tham số level</span>
+horn.Beep();</pre>
+        <hr>
+    </div>
+</div><div class="google-auto-placed ap_container" style="width: 100%; height: auto; clear: both; text-align: center;"><ins data-ad-format="auto" class="adsbygoogle adsbygoogle-noablate" data-ad-client="ca-pub-4170344512131207" data-adsbygoogle-status="done" style="display: block; margin: auto; background-color: transparent; height: 280px;" data-ad-status="filled"><div id="aswift_2_host" style="border: none; height: 280px; width: 1020px; margin: 0px; padding: 0px; position: relative; visibility: visible; background-color: transparent; display: inline-block; overflow: visible;"><iframe id="aswift_2" name="aswift_2" browsingtopics="true" style="left:0;position:absolute;top:0;border:0;width:1020px;height:280px;" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" width="1020" height="280" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allow="attribution-reporting; run-ad-auction" src="./Dependency injection (DI) trong C# với ServiceCollection_files/ads(3).html" data-google-container-id="a!3" tabindex="0" title="Advertisement" aria-label="Advertisement" data-google-query-id="CJef04yp5oUDFcLoFgUdGWwFDA" data-load-complete="true"></iframe></div></ins></div>
+
+<div class="row">
+    <div class="col" style="background-color: #673ab742">
+
+<a id="di" name="di"></a>
+
+<h3 class="text-primary font25">Viết code có KHẢ NĂNG áp dụng DI</h3>
+<p>Xây dựng lại ví dụ trên sao cho phụ thuộc của Car có thể đưa vào nó từ bên ngoài.</p>
+
+<pre class="prettyprint lang-cs bg-transparent hljs language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Horn</span> {
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Beep</span> ()</span> =&gt; Console.WriteLine (<span class="hljs-string">"Beep - beep - beep ..."</span>);
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Car</span> {
+    <span class="hljs-comment">// horn là một Dependecy của Car</span>
+    Horn horn;
+
+    <span class="hljs-comment">// dependency Horn được đưa vào Car qua hàm khởi tạo</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Car</span>(<span class="hljs-params">Horn horn</span>)</span> =&gt; <span class="hljs-keyword">this</span>.horn = horn;
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Beep</span> ()</span> {
+        <span class="hljs-comment">// Sử dụng Dependecy đã được Inject</span>
+        horn.Beep ();
+    }
+}
+</pre>
+<p>Khi sử dụng:</p>
+<pre class="prettyprint lang-cs bg-transparent hljs language-csharp">Horn horn = <span class="hljs-keyword">new</span> Horn();
+
+<span class="hljs-keyword">var</span> car = <span class="hljs-keyword">new</span> Car(horn); <span class="hljs-comment">// horn inject vào car</span>
+car.Beep(); <span class="hljs-comment">// Beep - beep - beep ...</span>
+</pre>
+<p>Code trên hoạt động tương tự trường hợp thứ nhất. Bằng cách khai bảo Horn là một biến thành viên trong Car,
+    Car đã có một dependency là đối tượng lớp Horn, dependency này không phải do Car tạo ra,
+    nó được bơm vào (cung cấp) thông qua phương thức khởi tạo của nó.</p>
+        <hr>
+        <p>Kết quả gọi <code>car.Beep();</code> có vẻ kết quả vẫn như trên, nhưng code mới này có một số lợi ích.
+    Ví dụ, nếu sửa cập nhật lại Horn bằng cách sửa phương thức khởi tạo của nó, thì lớp Car không phải sửa gì!</p>
+        <hr>
+<pre class="prettyprint lang-cs bg-transparent hljs language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Horn</span> {
+    <span class="hljs-built_in">int</span> level; <span class="hljs-comment">// thêm độ lớn còi xe</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Horn</span> (<span class="hljs-params"><span class="hljs-built_in">int</span> level</span>)</span> =&gt; <span class="hljs-keyword">this</span>.level = level; <span class="hljs-comment">// thêm khởi tạo level</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Beep</span> ()</span> =&gt; Console.WriteLine (<span class="hljs-string">"Beep - beep - beep ..."</span>);
+}
+</pre>
+        <hr>
+<pre class="prettyprint lang-cs bg-transparent hljs language-csharp">Horn horn = <span class="hljs-keyword">new</span> Horn(<span class="hljs-number">10</span>);
+
+<span class="hljs-keyword">var</span> car = <span class="hljs-keyword">new</span> Car(horn); <span class="hljs-comment">// horn inject vào car</span>
+car.Beep(); <span class="hljs-comment">// Beep - beep - beep ...</span></pre>
+<p class="alert alert-danger bg-transparent">Như vậy, viết code mà các dependency có thể đưa vào từ bên ngoài (chủ yếu
+qua phương thức khởi tạo), giúp cho các dịch vụ tương  đối độc lập nhau. Nó là cơ sở để có thể dùng các Framework hỗ trợ
+DI (tự động phân tích tạo dịch vụ, dependency)</p>
+
+        <hr>
+
+    </div>
+</div>
+<a id="dis" name="dis"></a>
+<h2 class="display-4 text-success font30">Các kiểu Dependency Injection</h2>
+<p>Từ cách thức một dependency được đưa vào đối tường cần nó thì được phân chia có ba kiểu DI:</p>
+<ul>
+    <li><strong>Inject thông qua phương thức khởi tạo:</strong> cung cấp các Dependency cho đối tượng thông qua hàm khởi tạo (
+        như đã thực hiện ở ví dụ trên) - <span class="text-danger">tập trung vào cách này vì thư viện .NET hỗ trợ sẵn</span></li>
+    <li><strong>Inject thông qua setter: </strong> tức các Dependency như là thuộc tính của lớp, sau đó inject bằng gán
+        thuộc tính cho Depedency <code>object.denpendency = obj;</code></li>
+    <li><strong>Inject thông qua các Interface</strong> - xây dựng Interface có chứa các phương thức Setter để thiết lập
+    dependency, interface này sử dụng bởi các lớp triển khai,  lớp triển khai phải định nghĩa các setter quy định trong interface</li>
+</ul>
+
+<p class="alert alert-danger">Trong ba kiểu Inject thì Inject qua phương thức khởi tạo rất phổ biến vì tính linh hoạt, mềm dẻo,
+    dễ xây dựng thư viện DI...</p>
+
+<p>Ví dụ, xây dựng lại code phần trên với kỹ thuật <strong>INJECT BẰNG HÀM TẠO</strong> kết hợp với thiết kế phụ thuộc lỏng
+    lẻo giữa các dependency (Dependency Inverse) ở trên.</p>
+<p>Đầu tiên xây dựng một interface là IHorn</p>
+<pre class="prettyprint lang-cs hljs language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title">IHorn</span> {
+    <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">Beep</span> ()</span>;
+}
+</pre>
+<p>Lớp Car được xây dựng để sử dụng IHorn như là Dependency</p>
+<pre class="prettyprint lang-cs hljs language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">Car</span> {
+    IHorn horn;                                  <span class="hljs-comment">// IHorn (Interface) là một Dependecy của Car</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Car</span> (<span class="hljs-params">IHorn horn</span>)</span> =&gt; <span class="hljs-keyword">this</span>.horn = horn; <span class="hljs-comment">// Inject từ hàm  tạo</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Beep</span> ()</span> =&gt; horn.Beep ();
+}
+</pre>
+
+<p>Với cách triển khai DI bằng phương thức khởi tạo như vậy, kết hợp với sự phụ thuộc lỏng giữa Car và các lớp triển khai IHorn.
+    Thì sử dụng Car tạo ra các đối tượng cụ thể rất linh hoạt và độc lập với nhiều loại đối tượng triển khai
+    IHorn, ví dụ thử tạo ra hai loại còi một cái loại lơn và một cái loại nhẹ</p>
+<pre class="prettyprint lang-cs bg-transparent hljs language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">HeavyHorn</span> : <span class="hljs-title">IHorn</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Beep</span>()</span> =&gt; Console.WriteLine(<span class="hljs-string">"(kêu to lắm) BEEP BEEP BEEP ..."</span>);
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">LightHorn</span> : <span class="hljs-title">IHorn</span>
+{
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Beep</span>()</span> =&gt; Console.WriteLine(<span class="hljs-string">"(kêu bé lắm) beep  bep  bep ..."</span>);
+}
+</pre>
+<p>Lúc này khi sử dụng, Car của bạn có dùng loại còi nào thì dùng - logic code giống nhau</p>
+<pre class="prettyprint lang-cs bg-transparent hljs language-csharp">Car car1 = <span class="hljs-keyword">new</span> Car(<span class="hljs-keyword">new</span> HeavyHorn());
+car1.Beep();                             <span class="hljs-comment">// (kểu to lắm) BEEP BEEP BEEP ...</span>
+
+Car car2 = <span class="hljs-keyword">new</span> Car(<span class="hljs-keyword">new</span> LightHorn());
+car2.Beep();                             <span class="hljs-comment">// (kểu bé lắm) beep  bep  bep ...</span></pre>
+
+
+<p class="alert alert-primary text-monospace"><strong>Inject</strong> bằng phương thức khởi tạo nên tập trung vào đó,
+    vì các thư viện DI hỗ trợ tốt</p>
+<p>
+    Toàn bộ phần trên là lý thuyết cơ bản, triển khai thực tế thì cần có một dịch vụ trung tâm gọi là DI Container,
+    tại đó các lớp (dịch vụ) đăng ký vào, sau đó khi sư dụng dịch vụ nào nó tự động tạo ra dịch vụ đó, nếu dịch vụ đó
+    cần dependency nào nó cũng tự tạo dependency và tự động bơm vào dịch vụ cho chung ta.
+    Để tự xây dựng ra một DI Container rất phức tạp, nên ở đây ta không cố gắng xây dựng một DI Container riêng, thay
+    vào đó ta sẽ sử dụng các thư viện hỗ trợ sẵn cho .NET
+</p>
+<hr>
+
+
+<a id="DICONTAINER" name="DICONTAINER"></a>
+<h2 class="display-4 text-success font30">DI Container</h2>
+<p>Mục đích sử dụng DI, để tạo ra các đối tượng dịch vụ kéo theo là các Dependency của đối tượng đó. Để làm điều này ta
+    cần sử dụng đến các thư viện, có rất nhiều thư viện DI - Container (cơ chứa chứa và quản lý các dependency) như:
+    <a href="https://github.com/castleproject/Windsor" target="_blank">Windsor</a>,
+    <a href="https://github.com/unitycontainer/unity" target="_blank">Unity</a>
+    <a href="https://github.com/ninject/ninject" target="_blank">Ninject</a>,
+    <a href="https://github.com/aspnet/DependencyInjection" target="_blank">DependencyInjection</a> ...
+</p>
+<p>Trong  đó <a href="https://github.com/aspnet/DependencyInjection" target="_blank">DependencyInjection</a> là DI Container
+    mặc định của <code>ASP.NET Core</code>, phần này tìm hiểu về DI Container này
+    <a href="https://github.com/dotnet/runtime/tree/master/src/libraries/Microsoft.Extensions.DependencyInjection" target="_blank">Microsoft.Extensions.DependencyInjection</a>
+</p><div class="google-auto-placed ap_container" style="width: 100%; height: auto; clear: both; text-align: center;"><ins data-ad-format="auto" class="adsbygoogle adsbygoogle-noablate" data-ad-client="ca-pub-4170344512131207" data-adsbygoogle-status="done" style="display: block; margin: auto; background-color: transparent; height: 280px;" data-ad-status="filled"><div id="aswift_3_host" style="border: none; height: 280px; width: 1020px; margin: 0px; padding: 0px; position: relative; visibility: visible; background-color: transparent; display: inline-block; overflow: visible;"><iframe id="aswift_3" name="aswift_3" browsingtopics="true" style="left:0;position:absolute;top:0;border:0;width:1020px;height:280px;" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" width="1020" height="280" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allow="attribution-reporting; run-ad-auction" src="./Dependency injection (DI) trong C# với ServiceCollection_files/ads(4).html" data-google-container-id="a!4" tabindex="0" title="Advertisement" aria-label="Advertisement" data-google-query-id="CKH3z46p5oUDFdblFgUd_4UIgQ" data-load-complete="true"></iframe></div></ins></div>
+<p>Trước tiên phải đảm bảo tích hợp Package
+    <a href="https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/" target="_blank">
+        Microsoft.Extensions.DependencyInjection</a> vào dự án</p>
+<pre class="prettyprint hljs language-csharp">dotnet <span class="hljs-keyword">add</span> package Microsoft.Extensions.DependencyInjection</pre>
+<p>Sau đó sử dụng namespace</p>
+<pre class="prettyprint lang-cs hljs language-csharp"><span class="hljs-keyword">using</span>  Microsoft.Extensions.DependencyInjection;</pre>
+
+<p class="alert alert-danger">Từ đây các đối tượng lớp, các dependency ta gọi chúng là các dịch vụ (service)!</p>
+
+<a id="ServiceCollection" name="ServiceCollection"></a>
+<h3 class="display-4 font25 text-primary">Lớp ServiceCollection</h3>
+<p><code><strong>ServiceCollection</strong></code> là lớp triển khai giao diện <code>IServiceCollection</code> nó có chức
+    năng quản lý các dịch vụ (đăng ký dịch vụ - tạo dịch vụ - tự động inject - và các dependency của địch vụ ...).
+    ServiceCollection là trung tâm của kỹ thuật DI, nó là thành phần rất quan trọng trong ứng dụng ASP.NET
+</p>
+<p>Các sử dụng cơ bản như sau:</p>
+<ul>
+    <li>Khởi tạo đối tượng <code>ServiceCollection</code>,
+        sau đó đăng ký (lớp) các dịch vụ vào <code>ServiceCollection</code></li>
+    <li>Từ ServiceCollection phát sinh ra đối tượng <code>ServiceProvider</code>, từ đối tượng này
+    truy vấn lấy ra các dịch vụ cụ thể khi cần.</li>
+</ul>
+
+<p>
+    <strong>ServiceLifetime:</strong> Mỗi dịch vụ (lớp) khi đăng ký vào <code>ServiceCollection</code> thì có
+    một đối tượng <code>ServiceDescriptor</code> chứa thông tin về dịch vụ đó, căn cứ vào ServiceDescriptor để
+    ServiceCollection khởi tạo dịch vụ khi cần. Trong ServiceDescriptor có thuộc tính Lifetime
+    để xác định dịch vụ tạo ra tồn tại trog bao lâu. Lifetime có kiểu <code>ServiceLifetime</code> (kiểu enum)
+    có các giá trị cụ thể:</p>
+<small>
+
+    <table class="table table-sm">
+        <tbody><tr>
+            <td class="nowrap"><code>Scoped</code></td>
+            <td>1</td>
+            <td>Một bản thực thi (instance) của dịch vụ (Class) được tạo ra cho mỗi phạm vi,
+                tức tồn tại cùng với sự tồn tại của một đối tượng kiểu <code>ServiceScope</code>
+                (đối tượng này tạo bằng cách gọi <code>ServiceProvider.CreateScope</code>,
+                    đối tượng này hủy thì dịch vụ cũng bị hủy).
+            </td>
+        </tr>
+        <tr>
+            <td class="nowrap"><code>Singleton</code></td>
+            <td>0</td>
+            <td>Duy nhất một phiên bản thực thi (instance of class) (dịch vụ) được tạo ra cho hết vòng
+            đời của ServiceProvider</td>
+        </tr>
+        <tr>
+            <td class="nowrap"><code>Transient</code></td>
+            <td>2</td>
+            <td>Một phiên bản của dịch vụ được tạo mỗi khi được yêu cầu</td>
+        </tr>
+    </tbody></table></small>
+
+<p>Để bắt đầu sử dụng, khởi tạo ServiceCollection như sau</p>
+<pre class="prettyprint lang-cs hljs language-csharp"><span class="hljs-keyword">var</span> services = <span class="hljs-keyword">new</span> ServiceCollection();</pre>
+<p>Khi đã có đối tượng bạn có thể thực hiện các thao tác như đăng ký dịch vụ vào ServiceCollection
+(DI container), lấy đối tượng lớp <code>ServiceProvider</code> qua đó để truy vấn lấy các dịch vụ ...</p>
+
+<p class="font20">Một số phương thức của <strong>ServiceCollection</strong>, trong các phương thức
+có tham số thì kiểu như sau:</p>
+<ul>
+    <li><code>ServiceType</code> : Kiểu (tên lớp) dịch vụ</li>
+    <li><code>ImplementationType</code> : Kiểu (tên lớp) sẽ tạo ra
+        đối tượng dịch vụ theo tên <code>ServiceType</code>, cần đảm bảo ImplementationType là một lớp
+    triển khai / kế thừa từ ServiceType, hoặc chính là ServiceType</li>
+</ul>
+<table class="table table-sm table-danger">
+    <tbody><tr>
+        <th>Phương thức</th>
+        <th>Diễn giả</th>
+    </tr>
+    <tr class="bg-warning">
+        <td class="nowrap"><code>AddSingleton&lt;ServiceType, ImplementationType&gt;()</code><br>
+            <br>
+        <small>Nếu ServiceType giống ImplementationType có thể viết</small> <br>
+            <code>AddSingleton&lt;ServiceType&gt;()</code>
+        </td>
+        <td>Đăng ký dịch vụ kiểu <code>Singleton</code>. Ví dụ:
+        <pre class="prettyprint lang-cs bg-transparent hljs language-csharp">services.AddSingleton&lt;IHorn,  HeavyHorn&gt;();</pre>
+            Đăng ký dịch vụ kiểu <code>IHorn</code>, mà khi dịch vụ <code>IHorn</code>
+            được yêu cầu nó tạo ra và trả về đối tượng kiểu <code>HeavyHorn</code>,
+            do là Singleton chỉ một đối tượng của dịch vụ được tạo, nếu đã có
+            yêu cầu sau trả về đối tượng lần trước tạo (gọi ra thế nào ở phần sau).
+        </td>
+    </tr>
+    <tr>
+        <td class="nowrap"><code>AddTransient&lt;ServiceType, ImplementationType&gt;()</code><br>
+            Hoặc <br>
+            <code>AddTransient&lt;ServiceType&gt;()</code></td>
+        <td>Đăng ký dịch vụ thuộc loại <code>Transient</code>, luôn tạo mới mỗi khi có yêu cầu lấy dịch vụ.
+        </td>
+    </tr>
+    <tr class="bg-warning">
+        <td class="nowrap"><code>AddScoped&lt;ServiceType, ImplementationType&gt;()</code></td>
+        <td>Đăng ký vào hệ thống dịch vụ kiểu <code>Scoped</code></td>
+    </tr>
+    <tr>
+        <td class="nowrap"><code>BuildServiceProvider()</code></td>
+        <td>Tạo ra đối tượng lớp <code>ServiceProvider</code>, đối tượng này dùng để triệu gọi, tạo các dịch vụ
+            thiết lập ở trên.
+        </td>
+    </tr>
+
+</tbody></table>
+<p>Các phương thức <code>AddSingleton</code>, <code>AddTransient</code>, <code>AddScoped</code> còn có bản quá tải mà
+tham số là một callback delegate tạo đối tượng. Nó là cách triển khai pattern factory</p>
+
+    <a id="ServiceProvider" name="ServiceProvider"></a>
+    <h3 class="display-4 font25 text-primary">Lớp ServiceProvider</h3>
+<p>Lớp ServiceProvider cung cấp cơ chế để lấy ra (tạo và inject nếu cần)
+    các dịch vụ đăng ký trong ServiceCollection.
+Đối tượng ServiceProvider được tạo ra bằng cách gọi phương thức <code>BuildServiceProvider()</code>
+của <code>ServiceCollection</code></p>
+<pre class="prettyprint lang-cs hljs language-csharp"><span class="hljs-keyword">var</span> serviceprovider = services.BuildServiceProvider();</pre>
+<p>Một số phương thức trong ServiceProvider</p>
+<table class="table table-sm">
+    <tbody><tr>
+        <td><span>Phương thức</span></td>
+        <td>Diễn giả</td>
+    </tr>
+    <tr>
+        <td class="nowrap"><code>GetService&lt;ServiceType&gt;()</code></td>
+        <td>Lấy dịch vụ có kiểu ServiceType - trả về <code>null</code> nếu dịch vụ không tồn tại
+        <pre class="prettyprint lang-cs hljs language-csharp"><span class="hljs-comment">// lấy đối tượng triển khai IHorn</span>
+services.GetService&lt;IHorn&gt;()</pre>
+        </td>
+    </tr>
+    <tr>
+        <td class="nowrap"><code>GetRequiredService(ServiceType)</code></td>
+        <td>Lấy dịch vụ có kiểu ServiceType - phát sinh Exception nếu dịch vụ không tồn tại
+        <pre class="prettyprint lang-cs hljs language-csharp"><span class="hljs-comment">// lấy đối tượng kiểu Car</span>
+services.GetRequiredService(Car)</pre>
+        </td>
+    </tr>
+    <tr>
+        <td class="nowrap"><code>CreateScope()</code></td>
+        <td>Tạo một phạm vi mới, thường dùng khi sử dụng những dịch vụ có sự ảnh hưởng theo <code>Scoped</code>,
+            sử dụng cơ bản:
+<pre class="prettyprint lang-cs hljs language-csharp"><span class="hljs-keyword">using</span> (<span class="hljs-keyword">var</span> scope = serviceprovider.CreateScope())
+{
+    <span class="hljs-comment">//  Lấy Service trong một pham vi</span>
+    <span class="hljs-keyword">var</span> myservice = scope.ServiceProvider.GetService&lt;ServiceType&gt;();
+
+    <span class="hljs-comment">// ...</span>
+    <span class="hljs-comment">// ... Ra khỏi phạm vị, các Service kiểu Scoped tạo ra trong phạm vi</span>
+    <span class="hljs-comment">//     using ...  sẽ bị hùy</span>
+}
+</pre>
+        </td>
+    </tr>
+
+
+</tbody></table>
+<p>Để cụ thể hơn sử dụng DI với thư viện ServiceCollection, ta sẽ thực hành cho vài trường hợp:</p>
+<a id="UseServiceCollection" name="UseServiceCollection"></a>
+<h3 class="text-primary font25">Sử dụng ServiceCollection cơ bản</h3>
+<p>Xét lại các lớp IClassA, IClassB, ClassA ... đã xây dựng ở trên, áp dụng vài trường hợp riêng lẻ sau:</p>
+<p><strong>Dịch vụ được đăng ký là Singleton</strong></p>
+<pre class="prettyprint lang-cs hljs language-csharp"><span class="hljs-comment">// Đăng ký dịch vụ IClassC tương ứng với đối tượng ClassC</span>
+services.AddSingleton&lt;IClassC, ClassC&gt;();
+
+<span class="hljs-keyword">var</span> provider = services.BuildServiceProvider();
+
+<span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">5</span>; i++)
+{
+    <span class="hljs-keyword">var</span> service = provider.GetService&lt;IClassC&gt;();
+    Console.WriteLine(service.GetHashCode());
+} 
+<span class="hljs-comment">// ClassC is created</span>
+<span class="hljs-comment">// 32854180</span>
+<span class="hljs-comment">// 32854180</span>
+<span class="hljs-comment">// 32854180</span>
+<span class="hljs-comment">// 32854180</span>
+<span class="hljs-comment">// 32854180</span>
+<span class="hljs-comment">// Gọi 5 lần chỉ 1 dịch vụ (đối tượng) được tạo ra</span>
+</pre>
+    <p><strong>Dịch vụ được đăng ký là Transient</strong></p>
+<pre class="prettyprint lang-cs hljs language-csharp">services.AddTransient&lt;IClassC, ClassC&gt;();
+
+<span class="hljs-keyword">var</span> provider = services.BuildServiceProvider();
+
+<span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">5</span>; i++)
+{
+    <span class="hljs-keyword">var</span> service = provider.GetService&lt;IClassC&gt;();
+    Console.WriteLine(service.GetHashCode());
+} 
+<span class="hljs-comment">// ClassC is created</span>
+<span class="hljs-comment">// 32854180</span>
+<span class="hljs-comment">// ClassC is created</span>
+<span class="hljs-comment">// 27252167</span>
+<span class="hljs-comment">// ClassC is created</span>
+<span class="hljs-comment">// 43942917</span>
+<span class="hljs-comment">// ClassC is created</span>
+<span class="hljs-comment">// 59941933</span>
+<span class="hljs-comment">// ClassC is created</span>
+<span class="hljs-comment">// 2606490</span>
+<span class="hljs-comment">// Gọi 5 lần có 5 dịch vụ được tạo ra</span>
+</pre>
+
+    <p><strong>Dịch vụ được đăng ký là Scoped</strong></p>
+<pre class="prettyprint lang-cs hljs language-csharp">ServiceCollection services = <span class="hljs-keyword">new</span> ServiceCollection();
+
+<span class="hljs-comment">// Đăng ký dịch vụ IClassC tương ứng với đối tượng ClassC</span>
+services.AddScoped&lt;IClassC, ClassC&gt;();
+
+<span class="hljs-keyword">var</span> provider = services.BuildServiceProvider();
+
+<span class="hljs-comment">// Lấy dịch vụ trong scope toàn cục</span>
+<span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">5</span>; i++)
+{
+    <span class="hljs-keyword">var</span> service = provider.GetService&lt;IClassC&gt;();
+    Console.WriteLine(service.GetHashCode());
+}
+
+<span class="hljs-comment">// Tạo ra scope mới</span>
+<span class="hljs-keyword">using</span> (<span class="hljs-keyword">var</span> scope = provider.CreateScope())
+{
+    <span class="hljs-comment">// Lấy dịch vụ trong scope</span>
+    <span class="hljs-keyword">for</span> (<span class="hljs-built_in">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">5</span>; i++)
+    {
+        <span class="hljs-keyword">var</span> service = scope.ServiceProvider.GetService&lt;IClassC&gt;();
+        Console.WriteLine(service.GetHashCode());
+    }
+} 
+<span class="hljs-comment">// ClassC is created</span>
+<span class="hljs-comment">// 32854180</span>
+<span class="hljs-comment">// 32854180</span>
+<span class="hljs-comment">// 32854180</span>
+<span class="hljs-comment">// 32854180</span>
+<span class="hljs-comment">// 32854180</span>
+<span class="hljs-comment">// ClassC is created</span>
+<span class="hljs-comment">// 27252167</span>
+<span class="hljs-comment">// 27252167</span>
+<span class="hljs-comment">// 27252167</span>
+<span class="hljs-comment">// 27252167</span>
+<span class="hljs-comment">// 27252167</span>
+<span class="hljs-comment">// Mỗi scope tạo ra một loại dịch vụ</span>
+</pre>
+
+<p><strong>Kiểm tra tạo và inject các dịch vụ đăng ký trong ServiceCollection</strong></p>
+<pre class="prettyprint lang-cs hljs language-csharp">
+<span class="hljs-comment">// ClassA</span>
+<span class="hljs-comment">// IClassB -&gt; ClassB,  ClassB1</span>
+<span class="hljs-comment">// IClassC -&gt; ClassC,  ClassC1</span>
+
+ServiceCollection services = <span class="hljs-keyword">new</span> ServiceCollection();
+
+services.AddSingleton&lt;ClassA, ClassA&gt;();
+services.AddSingleton&lt;IClassC, ClassC&gt;();
+services.AddSingleton&lt;IClassB, ClassB&gt;();
+
+<span class="hljs-keyword">var</span> provider = services.BuildServiceProvider();
+
+ClassA service_a = provider.GetService&lt;ClassA&gt;();
+
+service_a.ActionA();
+    
+<span class="hljs-comment">// ClassC is created</span>
+<span class="hljs-comment">// ClassB is created</span>
+<span class="hljs-comment">// ClassA is created</span>
+<span class="hljs-comment">// Action in ClassA</span>
+<span class="hljs-comment">// Action in ClassB</span>
+<span class="hljs-comment">// Action in ClassC</span>
+</pre>
+
+
+
+<a id="Factory" name="Factory"></a>
+<h3 class="text-primary font25">Sử dụng Delegate / Factory đăng ký dịch vụ</h3>
+<p><strong>Sử dụng Delegate đăng ký</strong></p>
+<p>Các phương thức để đăng dịch vụ vào ServiceCollection như AddSingleton, AddSingleton, AddTransient còn
+có phiên bản <i>(nạp chồng)</i> nó nhận tham số là delegate trả về đối tượng dịch vụ có kiểu ImplementationType.
+Ví dụ AddSingleton, cú pháp đó là:</p>
+<pre class="prettyprint lang-cs hljs language-csharp">services.AddSingleton&lt;ServiceType&gt;((IServiceProvider provider) =&gt; {
+    <span class="hljs-comment">// các chỉ thị</span>
+    <span class="hljs-comment">// ...</span>
+    <span class="hljs-keyword">return</span> (đối tượng kiểu ImplementationType);
+});
+</pre>
+<p>Trong cú pháp trên thì Delegate đó là</p>
+<pre class="prettyprint lang-cs hljs language-csharp">(IServiceProvider provider) =&gt; {
+    <span class="hljs-comment">// các chỉ thị</span>
+    <span class="hljs-comment">// ...</span>
+    <span class="hljs-keyword">return</span> (đối tượng kiểu ImplementationType);
+}
+</pre>
+<p>Nó nhận tham số là <code>IServiceProvider</code>
+<small>(chính là đối tượng được sinh ra bởi
+    ServiceCollection.BuildServiceProvider())</small>, Delegate phải trả về một đối tượng triển khai từ
+    ServiceType
+</p>
+<p>Ví dụ, tạo ra thêm lớp ClassB2</p>
+<pre class="prettyprint lang-cs hljs language-csharp"><span class="hljs-keyword">class</span> <span class="hljs-title">ClassB2</span> : <span class="hljs-title">IClassB</span>
+{
+    IClassC c_dependency;
+    <span class="hljs-built_in">string</span> message;
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">ClassB2</span>(<span class="hljs-params">IClassC classc, <span class="hljs-built_in">string</span> mgs</span>)</span>
+    {
+        c_dependency = classc;
+        message = mgs;
+        Console.WriteLine(<span class="hljs-string">"ClassB2 is created"</span>);
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">ActionB</span>()</span>
+    {
+        Console.WriteLine(message);
+        c_dependency.ActionC();
+    }
+}
+</pre>
+<p>Lớp trên khi khởi tạo cần có hai tham số. Vậy khi đăng ký vào dịch vụ theo cách:</p>
+<pre class="prettyprint lang-cs hljs language-csharp">services.AddSingleton&lt;IClassB, ClassB2&gt;();</pre>
+<p>Thì tham số khởi tạo IClassC được inject, trong khi đó tham số chuỗi string không đăng ký sẽ dẫn tới lỗi.
+Lúc này có thể đăng ký với Delegate và truyền chuỗi khởi tạo cụ thể, ví dụ:</p>
+
+<pre class="prettyprint lang-cs hljs language-csharp">services.AddSingleton&lt;IClassB&gt;((IServiceProvider serviceprovider) =&gt; {
+    <span class="hljs-keyword">var</span> service_c = serviceprovider.GetService&lt;IClassC&gt;();
+    <span class="hljs-keyword">var</span> sv = <span class="hljs-keyword">new</span> ClassB2(service_c, <span class="hljs-string">"Thực hiện trong ClassB2"</span>);
+    <span class="hljs-keyword">return</span> sv;
+});
+</pre>
+<p>Lúc này nếu lấy ra dịch vụ <code>IClassB</code> (hoặc khi nó Inject vào dịch vụ khác)
+    , nếu dịch vụ đó chưa có nó sẽ thi hành Delegate để tạo dịch vụ.</p>
+
+<p><strong>Sử dụng Factory đăng ký</strong></p>
+<p>Delegate trên bạn có thể khai báo thành một phương thức, một phương thức cung cấp cơ chế để tạo ra
+đối tượng mong muốn gọi là Factory.</p>
+<pre class="prettyprint lang-cs hljs language-csharp"><span class="hljs-comment">// Factory nhận tham số là IServiceProvider và trả về đối tượng địch vụ cần tạo</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> ClassB2 <span class="hljs-title">CreateB2Factory</span>(<span class="hljs-params">IServiceProvider serviceprovider</span>)</span>
+{
+    <span class="hljs-keyword">var</span> service_c = serviceprovider.GetService&lt;IClassC&gt;();
+    <span class="hljs-keyword">var</span> sv = <span class="hljs-keyword">new</span> ClassB2(service_c, <span class="hljs-string">"Thực hiện trong ClassB2"</span>);
+    <span class="hljs-keyword">return</span> sv;
+}
+</pre>
+<p>Lúc này có thể sử dụng Factory trên để đăng ký IClassB.</p>
+<pre class="prettyprint lang-cs hljs language-csharp">services.AddSingleton&lt;IClassB&gt;(CreateB2Factory);</pre>
+<hr>
+<div class="row">
+    <div class="col" style="background-color: #e91e630d">
+        <a id="Options" name="Options"></a>
+        <h3 class="text-primary font25">Sử dụng Options khởi tạo dịch vụ trong DI</h3>
+        <p>Khi một dịch vụ đăng ký trong DI, nếu nó cần các tham số để khởi tạo thì ta có thể Inject các tham
+        số khởi tạo là các đối tượng như cách làm ở trên. Tuy nhiên để tách bạch giữa các dịch vụ và các thiết
+        lập truyền vào để khởi tạo dịch vụ thì trong ServiceCollection hỗ trợ sử dụng giao diện IOptions.</p>
+        <p>Trước tiên cần thêm package <code>Microsoft.Extensions.Options</code></p>
+
+        <pre class="prettyprint lang-cs bg-transparent hljs language-csharp">dotnet <span class="hljs-keyword">add</span> package Microsoft.Extensions.Options</pre>
+        <p>Sử dụng namepace:</p>
+        <pre class="prettyprint lang-cs bg-transparent hljs language-csharp"><span class="hljs-keyword">using</span> Microsoft.Extensions.Options;</pre>
+        <p>Các thiết lập cho một dịch vụ thường thiết kế là một lớp chứa các thuộc tính, ví dụ có lớp là
+        <code>MyService</code>, khi nó khởi tạo thì cần một đối tượng lớp <code>MyServiceOptions</code></p>
+<pre class="prettyprint lang-cs hljs language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyServiceOptions</span>
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-built_in">string</span> data1 { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+    <span class="hljs-keyword">public</span> <span class="hljs-built_in">int</span> data2 { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+}
+</pre>
+<p>Để có thể Inject MyServiceOptions vào MyService theo nguyên tắc của ServiceCollection thì lớp
+    MyService thiết kế sử dụng IOption làm tham số khởi tạo như sau:
+</p>
+<pre class="prettyprint lang-cs hljs language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">MyService</span>
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-built_in">string</span> data1 { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+    <span class="hljs-keyword">public</span> <span class="hljs-built_in">int</span> data2 { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>;}
+
+    <span class="hljs-comment">// Tham số khởi tạo là IOptions, các tham số khởi tạo khác nếu có khai báo như bình thường</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">MyService</span>(<span class="hljs-params">IOptions&lt;MyServiceOptions&gt; options</span>)</span>
+    {
+        <span class="hljs-comment">// Đọc được MyServiceOptions từ IOptions</span>
+        MyServiceOptions opts = options.Value;
+        data1 = opts.data1;
+        data2 = opts.data2;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">PrintData</span>()</span> =&gt; Console.WriteLine(<span class="hljs-string">$"<span class="hljs-subst">{data1}</span> / <span class="hljs-subst">{data2}</span>"</span>);
+}
+</pre>
+ <p>Khi tham số khởi tạo có kiểu IOptions, thì nó được Inject vào từ một tập hợp các IOptions riêng biệt
+ với các dịch vụ, và các IOptions nạp vào ServiceCollection bằng phương thức <strong>Configure</strong>, cách làm
+ như sau:</p>
+        <hr>
+
+<p>Để đăng ký vào hệ thống một lớp <code>T</code> là cấu hình,
+    sau này sẽ có các đối tượng kiểu <code>IOptions&lt;T&gt;</code> có thể Inject vào thì làm như sau:</p>
+<pre class="prettyprint lang-cs bg-transparent hljs language-csharp">services.Configure&lt;T&gt;(
+    (T options)
+    {
+        <span class="hljs-comment">// T là tên lớp chứa các thiết lập</span>
+        <span class="hljs-comment">// Hãy thiết lập các giá trị cho options</span>
+    }
+);</pre>
+
+        <p>Cụ thể đăng ký <code>MyServiceOptions</code> tạo ra đối tượng cụ thể
+            để sau này có thể Inject vào MyService:</p>
+        <hr>
+<pre class="prettyprint lang-cs bg-transparent hljs language-csharp">services.Configure&lt;MyServiceOptions&gt;(
+    options =&gt; {
+        options.data1 = <span class="hljs-string">"Xin chao cac ban"</span>;
+        options.data2  = <span class="hljs-number">2021</span>;
+    }
+);
+</pre>
+    <p>Lúc này sử dụng</p>
+<pre class="prettyprint lang-cs hljs language-csharp">services.AddSingleton&lt;MyService&gt;();
+<span class="hljs-keyword">var</span> provider = services.BuildServiceProvider();
+
+<span class="hljs-keyword">var</span> myservice = provider.GetService&lt;MyService&gt;();
+myservice.PrintData();
+
+<span class="hljs-comment">// Kết quả:</span>
+<span class="hljs-comment">// Xin chao cac ban / 2021</span>
+</pre>
+    <p>Như vậy DI Container, đã giúp tạo Config (đối tượng MyServiceOptions) và Inject nó cho dịch vụ khi tạo (dịch vụ MyService)</p>
+        <hr>
+    <p><strong>Lưu ý 1: </strong> nếu muốn lấy đối tượng lớp <code>MyServiceOptions</code> trong DI Container, thì:</p>
+<pre class="prettyprint lang-cs bg-transparent hljs language-csharp"><span class="hljs-keyword">var</span> config = serviceprovider.GetService&lt;IOptions&lt;MyServiceOptions&gt;&gt;()
+MyServiceOptions myServiceOptions = config.Value;</pre>
+        <hr>
+    <p><strong>Lưu ý 2: </strong> nếu muốn tạo trực tiếp đối tượng <code>IOptions&lt;MyServiceOptions&gt;</code>,
+        dành cho trường hợp muốn tạo <code>MyService</code> trực tiếp không thông qua DI Container. Thì dùng
+        phương thức Factory <code>Options.Create(obj)</code>, ví dụ:
+    </p>
+    <pre class="prettyprint lang-cs bg-transparent hljs language-csharp"><span class="hljs-keyword">var</span> opts = Options.Create(<span class="hljs-keyword">new</span> MyServiceOptions() {
+    data1 = <span class="hljs-string">"DATA-DATA-DATA-DATA-DATA"</span>,
+    data2 = <span class="hljs-number">12345</span>
+});
+MyService myService = <span class="hljs-keyword">new</span> MyService(opts);
+myService.ShowData();</pre>
+        <hr>
+    </div>
+</div>
+
+
+
+<div class="row">
+    <div class="col" style="background-color:#3f51b514">
+        <a id="configfile" name="configfile"></a>
+        <h3 class="text-primary font25">Sử dụng cấu hình từ File cho DI Container</h3>
+        <p>Ở ví dụ trên, các giá trị dữ liệu trong <code>MyServiceOptions</code>
+            <small>(như <code>data1</code>, <code>data2</code>)</small> có thể lưu ở file sau đó nạp vào khi chương
+        trình thực thi. Các file cấu hình này hỗ trợ nhiều định dạng như XML, INI, JSON ...
+            <small>(cần cài đặt gói tương ứng)</small></p>
+        <p>Trước tiên thêm package <small>Microsoft.Extensions.Configuration và Microsoft.Extensions.Options.ConfigurationExtensions</small></p>
+        <pre class="prettyprint lang-cs bg-transparent hljs language-csharp">dotnet <span class="hljs-keyword">add</span> package Microsoft.Extensions.Configuration
+dotnet <span class="hljs-keyword">add</span> package Microsoft.Extensions.Options.ConfigurationExtensions</pre>
+        <p>Sau đó, muốn dùng định dạng nào thì thêm Package tương ứng, ví dụ dùng JSON:</p>
+        <pre class="prettyprint bg-transparent hljs language-csharp">dotnet <span class="hljs-keyword">add</span> package Microsoft.Extensions.Configuration.Json
+dotnet <span class="hljs-keyword">add</span> package Microsoft.Extensions.Configuration.Ini
+dotnet <span class="hljs-keyword">add</span> package Microsoft.Extensions.Configuration.Xml
+</pre>
+        <p>Sử dụng namespace với kiểu file Json</p>
+        <pre class="prettyprint lang-cs hljs language-csharp"><span class="hljs-keyword">using</span> Microsoft.Extensions.Configuration;
+<span class="hljs-keyword">using</span> Microsoft.Extensions.Configuration.Json;</pre>
+        <hr>
+        <p><strong>ConfigurationBuilder</strong></p>
+        <p>Lớp <strong class="text-danger">ConfigurationBuilder</strong>, giúp nạp các cấu hình lưu trong file config,
+        từ đó build ra đối tượng <code>ConfigurationRoot</code>, đối tượng này truy cập đến các cấu hình bằng
+        chỉ toán tử chỉ số <code>[key]</code></p>
+        <p>Giá sử cấu hình lưu tại file <code>appsettings.json</code>, thì nạp cấu hình đó để có được <code>ConfigurationRoot</code></p>
+<pre class="prettyprint lang-cs bg-transparent hljs language-csharp"><span class="hljs-keyword">var</span> configBuilder = <span class="hljs-keyword">new</span> ConfigurationBuilder()
+                       .SetBasePath(Directory.GetCurrentDirectory())      <span class="hljs-comment">// file config ở thư mục hiện tại</span>
+                       .AddJsonFile(<span class="hljs-string">"appsettings.json"</span>);                  <span class="hljs-comment">// nạp config định dạng JSON</span>
+<span class="hljs-keyword">var</span> configurationroot = configBuilder.Build();                            <span class="hljs-comment">// Tạo configurationroot</span></pre>
+
+        <p>Khi có đối tượng <code>ConfigurationRoot</code>, lấy một Section nào đó bằng phương thức <code>GetSection(key)</code>,
+        nó trả về đối tượng biểu diễn nút cấu hình (JSON), giá trị của nút truy cập bằng thuộc tính <code>Value</code></p>
+        <p>Ví dụ, tạo file <code>appsettings.json</code> với nội dung</p>
+        <pre class="prettyprint bg-transparent hljs language-json"><span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">"MyServiceOptions"</span> <span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">"data1"</span> <span class="hljs-punctuation">:</span> <span class="hljs-string">"ABCDE"</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"data2"</span> <span class="hljs-punctuation">:</span> <span class="hljs-number">123456</span>
+    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+
+    <span class="hljs-attr">"Option2"</span> <span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">"key1"</span> <span class="hljs-punctuation">:</span> <span class="hljs-string">"Test"</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">"Key2"</span> <span class="hljs-punctuation">:</span> <span class="hljs-number">789</span>
+    <span class="hljs-punctuation">}</span>
+<span class="hljs-punctuation">}</span></pre>
+        <p>Truy cập config</p>
+<pre class="prettyprint lang-cs bg-transparent hljs language-csharp"><span class="hljs-keyword">var</span> cf1 = configurationroot.GetSection(<span class="hljs-string">"Option2"</span>).GetSection(<span class="hljs-string">"key1"</span>).Value; <span class="hljs-comment">// Test</span>
+<span class="hljs-keyword">var</span> cf2 = configurationroot.GetSection(<span class="hljs-string">"Option2"</span>).GetSection(<span class="hljs-string">"key2"</span>).Value; <span class="hljs-comment">// 789</span>
+<span class="hljs-keyword">var</span> cf3 = configurationroot.GetSection(<span class="hljs-string">"Option2"</span>).GetSection(<span class="hljs-string">"key3"</span>).Value; <span class="hljs-comment">// null, không tồn tại</span>
+</pre>
+<p>Như vậy đã có thể nạp và đọc các giá trị lưu trong file cấu hình json.</p>
+        <hr>
+        <p><strong>Nạp config json vào IOption</strong></p>
+
+        <p>Trong file JSON có một Section có tên <code>MyServiceOptions</code>,
+        ta có thể gán các giá trị trong Section đó vào MyServiceOptions trong ServiceCollection bằng cách</p>
+<pre class="prettyprint lang-cs hljs language-csharp"><span class="hljs-comment">// Nạp mở phương thức mở rộng</span>
+services.AddOptions();
+services.Configure&lt;MyServiceOptions&gt;(configurationroot.GetSection(<span class="hljs-string">"MyServiceOptions"</span>));
+
+<span class="hljs-comment">// Lưu ý: phải cài package  ConfigurationExtensions</span>
+<span class="hljs-comment">// dotnet add package Microsoft.Extensions.Options.ConfigurationExtensions</span>
+</pre>
+
+<p>Hoàn thiện ví dụ trên</p>
+<pre class="prettyprint lang-cs bg-transparent hljs language-csharp"><span class="hljs-keyword">var</span> configBuilder = <span class="hljs-keyword">new</span> ConfigurationBuilder()
+           .SetBasePath(Directory.GetCurrentDirectory())      <span class="hljs-comment">// file config ở thư mục hiện tại</span>
+           .AddJsonFile(<span class="hljs-string">"appsettings.json"</span>);                  <span class="hljs-comment">// nạp config định dạng JSON</span>
+<span class="hljs-keyword">var</span> configurationroot = configBuilder.Build();                <span class="hljs-comment">// Tạo configurationroot</span>
+
+ServiceCollection services = <span class="hljs-keyword">new</span> ServiceCollection();
+
+services.AddOptions(); 
+services.Configure&lt;MyServiceOptions&gt;(configurationroot.GetSection(<span class="hljs-string">"MyServiceOptions"</span>));
+
+services.AddSingleton&lt;MyService&gt;();
+
+<span class="hljs-keyword">var</span> provider = services.BuildServiceProvider();
+
+<span class="hljs-keyword">var</span> myservice = provider.GetService&lt;MyService&gt;();
+myservice.PrintData();
+
+<span class="hljs-comment">// Kết quả:</span>
+<span class="hljs-comment">// ABCDE / 123456</span></pre>
+
+    </div>
+</div><div class="google-auto-placed ap_container" style="width: 100%; height: auto; clear: both; text-align: center;"><ins data-ad-format="auto" class="adsbygoogle adsbygoogle-noablate" data-ad-client="ca-pub-4170344512131207" data-adsbygoogle-status="done" style="display: block; margin: auto; background-color: transparent; height: 280px;" data-ad-status="filled"><div id="aswift_4_host" style="border: none; height: 280px; width: 1020px; margin: 0px; padding: 0px; position: relative; visibility: visible; background-color: transparent; display: inline-block; overflow: visible;"><iframe id="aswift_4" name="aswift_4" browsingtopics="true" style="left:0;position:absolute;top:0;border:0;width:1020px;height:280px;" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" width="1020" height="280" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allow="attribution-reporting; run-ad-auction" src="./Dependency injection (DI) trong C# với ServiceCollection_files/ads(5).html" data-google-container-id="a!5" tabindex="0" title="Advertisement" aria-label="Advertisement" data-google-query-id="CJqhkbqp5oUDFcjNFgUd1koLZg" data-load-complete="true"></iframe></div></ins></div>
+<p>Kỹ thuật DI với thư viện DependencyInjection ở trên là kiến rất cần nắm vững, nó là cơ sở để học
+các các mô hình lập trình hiện đại, nhất là sau này áp dụng với Asp.Net Core bạn cần hiểu nó.</p>
+
+
+
+
+    <div class="dropdown fixed-bottom text-right">
+    <button class="btn btn-danger dropdown-toggle m-1 btn-sm" data-toggle="dropdown">
+        Mục lục bài viết
+    </button>
+    <div class="dropdown-menu"><a class="dropdown-item" href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#InversionofControl"><strong>Inversion of Control</strong></a><a class="dropdown-item" href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#Dependencyinjection"><strong>Dependency injection</strong></a><a class="dropdown-item" href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#nodi"><i>Không áp dụng kỹ thuật DI</i></a><a class="dropdown-item" href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#di"><i>Áp dụng kỹ thuật DI</i></a><a class="dropdown-item" href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#dis"><strong>Những kiểu DI</strong></a><a class="dropdown-item" href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#DICONTAINER"><strong>DI Container</strong></a><a class="dropdown-item" href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#ServiceCollection"><i>Lớp ServiceCollection</i></a><a class="dropdown-item" href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#ServiceProvider"><i>Lớp ServiceProvider</i></a><a class="dropdown-item" href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#UseServiceCollection"><i>Sử dụng DI cơ bản</i></a><a class="dropdown-item" href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#Factory"><i>Sử dụng Delegate / Factor để đăng ký dịch vụ</i></a><a class="dropdown-item" href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#Options"><i>Sử dụng Options khởi tạo dịch vụ</i></a><a class="dropdown-item" href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html#configfile"><i>Sử dụng cấu hình từ file thiết lập</i></a></div></div>
+
+
+
+     
+           
+
+ 
+             <div class="p-2 row justify-content-center align-items-center align-content-center m-1 mb-4 youtubesub">
+                    <div class="col-6 text-right text-uppercase textintro">
+                        <a href="https://www.youtube.com/xuanthulab?sub_confirmation=1" target="_blank" class="btn btn-sm btn-warning">ĐĂNG KÝ KÊNH, XEM CÁC VIDEO TRÊN XUANTHULAB</a>
+                    </div>
+                    <div class="col-6">
+                        <div id="___ytsubscribe_0" style="text-indent: 0px; margin: 0px; padding: 0px; background: transparent; border-style: none; float: none; line-height: normal; font-size: 1px; vertical-align: baseline; display: inline-block; width: 142px; height: 48px;"><iframe ng-non-bindable="" frameborder="0" hspace="0" marginheight="0" marginwidth="0" scrolling="no" style="position: static; top: 0px; width: 142px; margin: 0px; border-style: none; left: 0px; visibility: visible; height: 48px;" tabindex="0" vspace="0" width="100%" id="I0_1714355812994" name="I0_1714355812994" src="./Dependency injection (DI) trong C# với ServiceCollection_files/subscribe_embed.html" data-gapiattached="true"></iframe></div>
+                    </div>
+                    
+                    <div class="col-12">
+                    <hr>
+                     <form class="form-inline  mt-2 w-100" action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#39;https://feedburner.google.com/fb/a/mailverify?uri=xuanthulab&#39;, &#39;popupwindow&#39;, &#39;scrollbars=yes,width=550,height=520&#39;);return true">
+                 <span></span>
+                  <div class="input-group mb-2 mr-sm-2">
+<div class="input-group-prepend">
+      <div class="input-group-text">Đăng ký nhận bài viết mới</div>
+    </div>
+    <input type="text" class="form-control" style="width:200px" name="email" placeholder="Địa chỉ email">
+  </div>
+
+                
+                <input type="hidden" value="xuanthulab" name="uri">
+                <input type="hidden" name="loc" value="en_US">
+                <input type="submit" value="Đăng ký" class="btn btn-danger mb-2"></form>
+</div>
+                    
+                   
+                    
+                
+            </div>
+
+
+</div>
+
+
+        <div class="socialmediabox">
+            
+<div class="fb-like fb_iframe_widget" data-href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html" data-width="" data-layout="button_count" data-action="like" data-size="small" data-share="true" fb-xfbml-state="rendered" fb-iframe-plugin-query="action=like&amp;app_id=1565807193699425&amp;container_width=0&amp;href=https%3A%2F%2Fxuanthulab.net%2Fdependency-injection-di-trong-c-voi-servicecollection.html&amp;layout=button_count&amp;locale=vi_VN&amp;sdk=joey&amp;share=true&amp;size=small&amp;width="><span style="vertical-align: bottom; width: 150px; height: 28px;"><iframe name="f755c77aaf5fb818b" width="1000px" height="1000px" data-testid="fb:like Facebook Social Plugin" title="fb:like Facebook Social Plugin" frameborder="0" allowtransparency="true" allowfullscreen="true" scrolling="no" allow="encrypted-media" src="./Dependency injection (DI) trong C# với ServiceCollection_files/like.html" style="border: none; visibility: visible; width: 150px; height: 28px;" class=""></iframe></span></div>
+
+
+ <div class="tw">
+ <a href="https://twitter.com/share?url=https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html&amp;via=xaydungkientruc">
+ <img src="./Dependency injection (DI) trong C# với ServiceCollection_files/favicon.ico">
+</a>
+</div>        </div>
+        <div class="fb-comments fb_iframe_widget fb_iframe_widget_fluid_desktop" data-href="https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html" data-width="100%" data-numposts="5" data-colorscheme="light" fb-xfbml-state="rendered" fb-iframe-plugin-query="app_id=1565807193699425&amp;color_scheme=light&amp;container_width=1020&amp;height=100&amp;href=https%3A%2F%2Fxuanthulab.net%2Fdependency-injection-di-trong-c-voi-servicecollection.html&amp;locale=vi_VN&amp;numposts=5&amp;sdk=joey&amp;version=v7.0&amp;width=" style="width: 100%;"><span style="vertical-align: bottom; width: 100%; height: 982px;"><iframe name="f3fc7050c9a57cbf2" width="1000px" height="100px" data-testid="fb:comments Facebook Social Plugin" title="fb:comments Facebook Social Plugin" frameborder="0" allowtransparency="true" allowfullscreen="true" scrolling="no" allow="encrypted-media" src="./Dependency injection (DI) trong C# với ServiceCollection_files/comments.html" style="border: none; visibility: visible; width: 100%; height: 982px;" class=""></iframe></span></div>
+
+<aside class="box-post-others">
+    <div class="list-group">
+                    <a class="list-group-item list-group-item-action" href="https://xuanthulab.net/top-level-statement-trong-lap-trinh-c-net-6.html">Top-level statement trong lập trình C# .NET 6</a>
+                    <a class="list-group-item list-group-item-action" href="https://xuanthulab.net/tao-cac-requirement-va-authorization-handler-chung-thuc-quyen-truy-cap-authorize-trong-asp-net-core.html">Tạo các Requirement và Authorization handler chứng thực quyền truy cập Authorize trong ASP.NET Core</a>
+                    <a class="list-group-item list-group-item-action" href="https://xuanthulab.net/lop-uri-dns-ping-va-cac-lop-ve-networking-trong-lap-trinh-c-net-core.html">Lớp Uri Dns Ping và các lớp về Networking trong lập trình C# NET Core</a>
+                    <a class="list-group-item list-group-item-action" href="https://xuanthulab.net/code-c-chuyen-so-thanh-chu.html">Code C# chuyển số thành chữ</a>
+                    <a class="list-group-item list-group-item-action" href="https://xuanthulab.net/asp-net-core-mvc-trien-khai-ung-dung-asp-net-tren-server-linux-voi-kestrel-apache-nginx.html">(ASP.NET Core MVC) Triển khai ứng dụng ASP.NET trên Server Linux với Kestrel Apache Nginx</a>
+                    <a class="list-group-item list-group-item-action" href="https://xuanthulab.net/lap-trinh-bat-dong-bo-asynchronou-c-c-sharp-voi-bat-dong-bo-theo-mo-hinh-tac-vu.html">Lập trình bất đồng bộ asynchronou C# C Sharp với bất đồng bộ theo mô hình tác vụ</a>
+                    <a class="list-group-item list-group-item-action" href="https://xuanthulab.net/linq-trong-lap-trinh-c-net-thuc-hinh-vi-du-linq.html">Linq trong lập trình C# .NET - thực hình ví dụ Linq</a>
+                    <a class="list-group-item list-group-item-action" href="https://xuanthulab.net/kieu-vo-danh-va-kieu-dong-dynamic-trong-c-c-sharp.html">Kiểu vô danh và kiểu động dynamic trong C# C Sharp</a>
+                    <a class="list-group-item list-group-item-action" href="https://xuanthulab.net/cac-phuong-thuc-mo-rong-trong-c-c-sharp.html">Các phương thức mở rộng trong C# C Sharp</a>
+                    <a class="list-group-item list-group-item-action" href="https://xuanthulab.net/lop-dictionary-hashset-trong-c-c-sharp.html">Lớp Dictionary HashSet trong C# C Sharp</a>
+            </div>
+</aside>
+
+
+<div class="row w-100"><div class="text-right col-6">
+                     
+                    <a class="display-4 font20 text-danger" href="https://xuanthulab.net/su-dung-attribute-annotation-trong-lap-trinh-c-csharp.html">
+                    Attribute Annotation</a> <i class="fa fa-chevron-circle-left"></i> (Bài trước) </div><div class="col-6">
+                    (Bài tiếp) <i class="fa fa-chevron-circle-right"></i>
+                    <a class="display-4 font20 text-danger" href="https://xuanthulab.net/lap-trinh-multi-thread-c-su-dung-parallel-chay-song-song-cac-tac-vu.html">
+                    (Multithreading) Parallel 
+                    </a></div></div>        </div>
+    </div><div class="google-auto-placed" style="width: 100%; height: auto; clear: both; text-align: center;"><ins data-ad-format="auto" class="adsbygoogle adsbygoogle-noablate" data-ad-client="ca-pub-4170344512131207" data-adsbygoogle-status="done" style="display: block; margin: 10px auto; background-color: transparent; height: 0px;" data-ad-status="unfilled"><div id="aswift_8_host" style="border: none; height: 0px; width: 1200px; margin: 0px; padding: 0px; position: relative; visibility: visible; background-color: transparent; display: inline-block; overflow: hidden; opacity: 0;"><iframe id="aswift_8" name="aswift_8" browsingtopics="true" style="left: 0px; position: absolute; top: 0px; border: 0px; width: 1200px; height: 0px;" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" width="1200" height="0" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allow="attribution-reporting; run-ad-auction" src="./Dependency injection (DI) trong C# với ServiceCollection_files/ads(6).html" data-google-container-id="a!9" tabindex="0" title="Advertisement" aria-label="Advertisement" data-google-query-id="COvCv8ip5oUDFUXTFgUdGu8LDw" data-load-complete="true"></iframe></div></ins></div>
+</div>
+
+
+
+<div class="google-auto-placed" style="width: 100%; height: auto; clear: both; text-align: center;"><ins data-ad-format="auto" class="adsbygoogle adsbygoogle-noablate" data-ad-client="ca-pub-4170344512131207" data-adsbygoogle-status="done" style="display: block; margin: 10px auto; background-color: transparent; height: 0px;" data-ad-status="unfilled"><div id="aswift_7_host" style="border: none; height: 0px; width: 1200px; margin: 0px; padding: 0px; position: relative; visibility: visible; background-color: transparent; display: inline-block; overflow: hidden; opacity: 0;"><iframe id="aswift_7" name="aswift_7" browsingtopics="true" style="left: 0px; position: absolute; top: 0px; border: 0px; width: 1200px; height: 0px;" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" width="1200" height="0" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allow="attribution-reporting; run-ad-auction" src="./Dependency injection (DI) trong C# với ServiceCollection_files/ads(7).html" data-google-container-id="a!8" tabindex="0" title="Advertisement" aria-label="Advertisement" data-google-query-id="CK-f0sip5oUDFUbwFgUdzwkPCQ" data-load-complete="true"></iframe></div></ins></div><div class="container">
+    <div class="row">
+        <div class="text-light p-4 rounded-bottom xtlab-footer">
+            <div class="d-flex xtlab-link-footer">
+    <a href="https://xuanthulab.net/pages/about/">Giới thiệu</a><a href="https://xuanthulab.net/pages/privacy/">Privacy</a><a href="https://xuanthulab.net/english-study/dictionary/">Từ điển Anh - Việt</a><a href="https://xuanthulab.net/chay-sql-online-cong-cu-hoc-cau-lenh-sql.html">Chạy SQL</a><a href="https://xuanthulab.net/cong-cu-kiem-tra-va-viet-bieu-thuc-bat-chinh-quy-regexp.html">RegExp</a><a href="https://xuanthulab.net/duong-cubic-bezier-ung-dung-cho-javascript-css.html">Cubic-bezier</a><a href="https://xuanthulab.net/unix-timestamp-chuyen-doi-thoi-gian-unix.html">Unix timestamp</a><a href="https://xuanthulab.net/danh-sach-ma-html-cac-ky-tu-dac-biet.html">Ký tự HTML</a><a href="https://xuanthulab.net/tinh-luong-calo-calories-hap-thu-cua-co-the-voi-chi-so-bmr.html">calories, chỉ số BMR</a><a href="https://xuanthulab.net/tinh-chi-so-khoi-co-the-bmi-xac-dinh-tinh-trang-thua-can-thieu-can.html">chỉ số khối cơ thể BMI</a><a href="https://xuanthulab.net/tao-ma-qr-code-online.html">Tạo QR Code</a><a href="https://xuanthulab.net/pages/lich-van-nien-lich-van-su/">Lịch vạn niên</a><a href="https://xuanthulab.net/contact/"><i class="fa fa-phone-square"></i> Liên hệ</a><a href="https://xuanthulab.net/feed.rss"><i class="fa fa-rss text-warning"></i> RSS</a></div>                            <p class="text-right text-secondary">
+Đây là blog cá nhân, tôi ghi chép và chia sẻ những gì tôi học được ở đây về kiến thức lập trình PHP, Java, JavaScript, Android, C# ... và các kiến thức công nghệ khác
+<br>
+Developed by <a href="https://xuanthulab.net/pages/about/">XuanThuLab</a>
+</p>                        <a href="https://www.dmca.com/Protection/Status.aspx?ID=54c4c685-c124-42c4-939f-7bccbf90cc17&amp;refurl=https://xuanthulab.net/dependency-injection-di-trong-c-voi-servicecollection.html" title="DMCA.com Protection Status" class="dmca-badge"> <img src="./Dependency injection (DI) trong C# với ServiceCollection_files/dmca-badge-w100-5x1-08.png" alt="DMCA.com Protection Status"></a>  <script src="./Dependency injection (DI) trong C# với ServiceCollection_files/DMCABadgeHelper.min.js.tải xuống"> </script>
+        </div>
+    </div>
+</div>
+<script src="./Dependency injection (DI) trong C# với ServiceCollection_files/platform.js.tải xuống" async="" defer="" gapi_processed="true">{lang: 'vi'}</script>
+<script>
+    //<!--
+    $('#headermenuxtlab').on('shown.bs.collapse', function ()
+{
+    $('#layout-menu').show();
+});
+
+$('#headermenuxtlab').on('hidden.bs.collapse', function ()
+{
+    $('#layout-menu').hide();
+});
+
+    //-->
+</script>
+    <div id="fb-root" class=" fb_reset"><div style="position: absolute; top: -10000px; width: 0px; height: 0px;"><div></div></div></div>
+    <script async="" defer="" crossorigin="anonymous" src="./Dependency injection (DI) trong C# với ServiceCollection_files/sdk(1).js.tải xuống" nonce="q55xBZvL"></script>
+    
+    <script>
+        hljs.configure({cssSelector: 'pre.prettyprint'});
+        hljs.highlightAll();
+    </script>
+
+
+
+<ins class="adsbygoogle adsbygoogle-noablate" data-adsbygoogle-status="done" style="display: none !important;" data-ad-status="unfilled"><div id="aswift_0_host" style="border: none; height: 0px; width: 0px; margin: 0px; padding: 0px; position: relative; visibility: visible; background-color: transparent; display: inline-block;"><iframe id="aswift_0" name="aswift_0" browsingtopics="true" style="left:0;position:absolute;top:0;border:0;width:undefinedpx;height:undefinedpx;" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allow="attribution-reporting; run-ad-auction" src="./Dependency injection (DI) trong C# với ServiceCollection_files/ads(8).html" data-google-container-id="a!1" tabindex="0" title="Advertisement" aria-label="Advertisement" data-load-complete="true"></iframe></div></ins><iframe name="oauth2relay671722999" id="oauth2relay671722999" src="./Dependency injection (DI) trong C# với ServiceCollection_files/postmessageRelay.html" tabindex="-1" aria-hidden="true" style="width: 1px; height: 1px; position: absolute; top: -100px;"></iframe><div style="display: block; visibility: hidden; position: absolute; width: 106px; left: -10000px; top: -10000px;"><table cellpadding="0" cellspacing="0" dir="ltr" style="width:106px;" frame="void" rules="none" class=" gc-bubbleDefault pls-container"><tbody><tr class="gc-reset"><td class="pls-topLeft gc-reset"><img class="gc-reset" style="width:1px !important; height:1px !important; max-width: 1px !important; max-height: 1px !important;" src="./Dependency injection (DI) trong C# với ServiceCollection_files/border_3.gif"></td><td class="pls-topTail gc-reset"><img class="pls-tailbottom gc-reset" style="width:15px !important; height:9px !important; max-width: 15px !important; max-height: 9px !important;" src="./Dependency injection (DI) trong C# với ServiceCollection_files/spacer.gif"><img class="pls-spacerbottom gc-reset" style="width:1px !important; height:1px !important; max-width: 1px !important; max-height: 1px !important;" src="./Dependency injection (DI) trong C# với ServiceCollection_files/spacer.gif"></td><td class="pls-topRight gc-reset"><img class="gc-reset" style="width:1px !important; height:1px !important; max-width: 1px !important; max-height: 1px !important;" src="./Dependency injection (DI) trong C# với ServiceCollection_files/border_3.gif"></td></tr><tr class="gc-reset"><td class="pls-vertShimLeft gc-reset"><img class="gc-reset" style="width:1px !important; height:4px !important; max-width: 1px !important; max-height: 4px !important;" src="./Dependency injection (DI) trong C# với ServiceCollection_files/spacer.gif"></td><td class="pls-vertShim gc-reset"><img class="gc-reset" style="width:1px !important; height:4px !important; max-width: 1px !important; max-height: 4px !important;" src="./Dependency injection (DI) trong C# với ServiceCollection_files/spacer.gif"></td><td class="pls-vertShimRight gc-reset"><img class="pls-dropTR gc-reset" style="width:5px !important; height:4px !important; max-width: 5px !important; max-height: 4px !important;" src="./Dependency injection (DI) trong C# với ServiceCollection_files/spacer.gif"></td></tr><tr class="gc-reset"><td class="pls-contentLeft gc-reset"><img class="pls-tailright gc-reset" style="width:9px !important; height:15px !important; max-width: 9px !important; max-height: 15px !important;" src="./Dependency injection (DI) trong C# với ServiceCollection_files/spacer.gif"><img class="pls-spacerright gc-reset" style="width:1px !important; height:1px !important; max-width: 1px !important; max-height: 1px !important;" src="./Dependency injection (DI) trong C# với ServiceCollection_files/spacer.gif"></td><td class="pls-contentWrap gc-reset"><div class="goog-bubble-content gc-reset"><iframe ng-non-bindable="" frameborder="0" hspace="0" marginheight="0" marginwidth="0" scrolling="no" style="margin:0px;position:absolute;z-index:1;border-style:none;outline:none;width:100px;" tabindex="0" vspace="0" width="100%" id="I0_1714355813247" name="I0_1714355813247" src="./Dependency injection (DI) trong C# với ServiceCollection_files/subscribe_embed(1).html"></iframe></div></td><td class="pls-dropRight gc-reset"><img class="pls-tailleft gc-reset" style="width:12px !important; height:19px !important; max-width: 12px !important; max-height: 19px !important;" src="./Dependency injection (DI) trong C# với ServiceCollection_files/spacer.gif"><img class="pls-spacerleft gc-reset" style="width:1px !important; height:1px !important; max-width: 1px !important; max-height: 1px !important;" src="./Dependency injection (DI) trong C# với ServiceCollection_files/spacer.gif"></td></tr><tr class="gc-reset"><td class="pls-bottomLeft gc-reset"><img class="gc-reset" style="width:1px !important; height:1px !important; max-width: 1px !important; max-height: 1px !important;" src="./Dependency injection (DI) trong C# với ServiceCollection_files/border_3.gif"></td><td class="gc-reset"><table cellpadding="0" cellspacing="0" style="width:100%" class="gc-reset"><tbody><tr class="gc-reset"><td class="pls-vert gc-reset"><img class="pls-dropBL gc-reset" style="width:4px !important; height:5px !important; max-width: 4px !important; max-height: 5px !important;" src="./Dependency injection (DI) trong C# với ServiceCollection_files/spacer.gif"></td><td class="pls-dropBottom gc-reset"><img class="pls-tailtop gc-reset" style="width:19px !important; height:13px !important; max-width: 19px !important; max-height: 13px !important;" src="./Dependency injection (DI) trong C# với ServiceCollection_files/spacer.gif"><img class="pls-spacertop gc-reset" style="width:1px !important; height:1px !important; max-width: 1px !important; max-height: 1px !important;" src="./Dependency injection (DI) trong C# với ServiceCollection_files/spacer.gif"></td></tr></tbody></table></td><td class="pls-vert gc-reset"><img class="pls-dropBR gc-reset" style="width:5px !important; height:5px !important; max-width: 5px !important; max-height: 5px !important;" src="./Dependency injection (DI) trong C# với ServiceCollection_files/spacer.gif"></td></tr></tbody></table></div><iframe name="googlefcPresent" style="display: none; width: 0px; height: 0px; border: none; z-index: -1000; left: -1000px; top: -1000px;" src="./Dependency injection (DI) trong C# với ServiceCollection_files/saved_resource(4).html"></iframe><ins class="adsbygoogle adsbygoogle-noablate" data-adsbygoogle-status="done" data-anchor-status="displayed" data-ad-status="filled" style="display: block; width: 100% !important; height: 129px !important; bottom: auto !important; clear: none !important; float: none !important; left: 0px; margin: 0px !important; max-height: none !important; max-width: none !important; opacity: 1; overflow: visible !important; padding: 0px !important; position: fixed; right: auto !important; top: 0px; vertical-align: baseline !important; visibility: visible !important; z-index: 2147483647; background: rgb(250, 250, 250) !important;" data-anchor-shown="true"><div id="aswift_9_host" style="border: none !important; height: 124px !important; width: 100% !important; margin: 0px !important; padding: 0px !important; position: relative !important; visibility: visible !important; background-color: transparent !important; display: inline-block !important; inset: auto !important; clear: none !important; float: none !important; max-height: none !important; max-width: none !important; opacity: 1 !important; overflow: visible !important; vertical-align: baseline !important; z-index: auto !important;"><iframe id="aswift_9" name="aswift_9" browsingtopics="true" style="width: 1005px !important; height: 124px !important; display: block; margin: 0px auto;" sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation" width="1005" height="124" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allow="attribution-reporting; run-ad-auction" src="./Dependency injection (DI) trong C# với ServiceCollection_files/zrt_lookup_fy2021.html" data-google-container-id="a!a" tabindex="0" title="Advertisement" aria-label="Advertisement" data-google-query-id="COPHtImp5oUDFYQyewcdhMcD9g" data-load-complete="true"></iframe></div><div class="grippy-host" style="position: absolute !important; top: 124px !important; width: 100% !important;"><template shadowrootmode="closed"><ins class="ee" style="inset: auto !important; clear: none !important; display: block !important; float: none !important; height: 5px !important; margin: 0px !important; max-height: none !important; max-width: none !important; opacity: 1 !important; overflow: visible !important; padding: 0px !important; position: relative !important; vertical-align: baseline !important; visibility: visible !important; width: auto !important; z-index: 1 !important; background-color: rgb(250, 250, 250) !important; box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 5px -1px, rgba(0, 0, 0, 0.1) 0px -1px 2px -1px !important;"><span style="display: block !important; width: 80px !important; height: 45px !important; top: 0px !important; left: 0% !important; pointer-events: none !important;"><svg style="margin: 0px !important; position: absolute !important; top: 0px !important; left: 0% !important; display: block !important; width: 80px !important; height: 30px !important; transform: none !important; pointer-events: initial !important;"><defs><filter id="dropShadowBottom" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><fecomponenttransfer in="SourceAlpha" result="TransferredAlpha"><fefuncr type="discrete" tableValues="0.5"></fefuncr><fefuncg type="discrete" tableValues="0.5"></fefuncg><fefuncb type="discrete" tableValues="0.5"></fefuncb></fecomponenttransfer><fegaussianblur in="TransferredAlpha" stdDeviation="2"></fegaussianblur><feoffset dx="0" dy="0" result="offsetblur"></feoffset><femerge><femergenode></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter></defs><path d="M0,4 L0,22 A6,6 0 0,0 6,28 L50,28 A6,6 0 0,0 56,22 L56,10 A6,6 0 0,1 61,4 Z" stroke="#FAFAFA" stroke-width="1" fill="#FAFAFA" style="filter: url(&quot;#dropShadowBottom&quot;);"></path><rect x="0" y="0" width="80" height="5" style="fill: rgb(250, 250, 250);"></rect><g class="up" stroke="#616161" stroke-width="2px" stroke-linecap="square"><line x1="22" y1="18" x2="28" y2="12"></line><line x1="28" y1="12" x2="34" y2="18"></line></g></svg></span></ins></template></div></ins><iframe name="__tcfapiLocator" src="./Dependency injection (DI) trong C# với ServiceCollection_files/saved_resource(5).html" style="display: none; width: 0px; height: 0px; border: none; z-index: -1000; left: -1000px; top: -1000px;"></iframe><iframe name="googlefcInactive" src="./Dependency injection (DI) trong C# với ServiceCollection_files/saved_resource(6).html" style="display: none; width: 0px; height: 0px; border: none; z-index: -1000; left: -1000px; top: -1000px;"></iframe><iframe name="googlefcLoaded" src="./Dependency injection (DI) trong C# với ServiceCollection_files/saved_resource(7).html" style="display: none; width: 0px; height: 0px; border: none; z-index: -1000; left: -1000px; top: -1000px;"></iframe><iframe src="./Dependency injection (DI) trong C# với ServiceCollection_files/aframe.html" width="0" height="0" style="display: none;"></iframe></body></html>

@@ -1,0 +1,70 @@
+using System;
+using System.Data.Common;
+using System.Net;
+using System.Runtime.ExceptionServices;
+using System.Runtime.InteropServices.Marshalling;
+using System.Runtime.Intrinsics.Arm;
+using System.Text;
+using System.Collections.Generic;
+using System.Linq;
+using System.IO;
+using System.Collections;
+using System.Collections.Immutable;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Security.Cryptography.X509Certificates;
+using System.IO.Compression;
+using Newtonsoft.Json;
+
+namespace NgocThe
+
+{
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class | AttributeTargets.Property)]
+    public class Mota : Attribute
+    {
+        
+        public Mota(string content)
+        {
+            description = content;
+        }
+
+        public string description{get;set;}
+    }
+    public class Product
+    {
+        public string name{get;set;}
+
+        public string origin{get;set;}
+        public double price{get;set;}
+
+        [Obsolete("Thuộc tính lưu tuổi")] 
+        public bool isFood{get;set;}
+
+        public List<string> lstTest{get;set;}
+
+        public string[] arrTest{get;set;}
+
+        [Obsolete ("Đây là ví dụ về attribute annotation")]
+        //[Mota ("Đây là ví dụ về attribute annotation")]
+        public void AttributeAnnotation()
+        {
+            System.Console.WriteLine("Hãy đưa con trỏ chuột về hàm này trong phần code để thấy sự khác biệt.");
+        }
+    }
+    public class Test
+    {
+       
+        static void Main()
+        {
+            Console.OutputEncoding = Encoding.UTF8;
+            // Ghi file
+            
+            Product d1 = new Product();
+            d1.isFood = false;
+            d1.AttributeAnnotation();
+
+            Console.ReadKey();
+        }
+    }
+
+}

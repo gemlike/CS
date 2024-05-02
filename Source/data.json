@@ -1,0 +1,14 @@
+{
+  "name": "Beef Cobe",
+  "origin": "China",
+  "price": 100000.0,
+  "isFood": true,
+  "lstTest": [
+    "3",
+    "4"
+  ],
+  "arrTest": [
+    "1",
+    "2"
+  ]
+}

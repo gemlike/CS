@@ -1,0 +1,54 @@
+using System;
+using System.Data.Common;
+using System.Net;
+using System.Runtime.ExceptionServices;
+using System.Runtime.InteropServices.Marshalling;
+using System.Runtime.Intrinsics.Arm;
+using System.Text;
+using System.Collections.Generic;
+using System.Linq;
+using System.IO;
+using System.Collections;
+using System.Collections.Immutable;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Security.Cryptography.X509Certificates;
+using System.IO.Compression;
+using Newtonsoft.Json;
+
+namespace NgocThe
+
+{
+    public class Product
+    {
+        public string name{get;set;}
+
+        public string origin{get;set;}
+        public double price{get;set;}
+
+        public bool isFood{get;set;}
+
+        public List<string> lstTest{get;set;}
+
+        public string[] arrTest{get;set;}
+    }
+    public class Test
+    {
+       
+        static void Main()
+        {
+            Console.OutputEncoding = Encoding.UTF8;
+            // Ghi file
+            Product pd1 = new Product(){name = "Beef Cobe", origin = "China", price = 100000, isFood = true, arrTest = new string[]{"1", "2"}, lstTest = new List<string>(){"3","4"}};
+            string js1 = JsonConvert.SerializeObject(pd1, Formatting.Indented);
+            File.WriteAllText("../Source/data.json", js1);
+            System.Console.WriteLine(js1);
+                       
+            // Doc file
+            Product pd2 = JsonConvert.DeserializeObject<Product>(js1);
+
+            Console.ReadKey();
+        }
+    }
+
+}

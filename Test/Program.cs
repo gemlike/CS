@@ -12,32 +12,30 @@ using System.Collections;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Security.Cryptography.X509Certificates;
+using System.IO.Compression;
+using Newtonsoft.Json;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Data.SqlClient;
 
 namespace NgocThe
 
 {
+    
     public class Test
     {
-        static void Change(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            switch(e.Action)
-            {
-                case NotifyCollectionChangedAction.Add:
-                    System.Console.WriteLine("Bạn vừa thêm phần tử.");
-                    break;
-                case NotifyCollectionChangedAction.Remove:
-                    System.Console.WriteLine("Bạn vừa xóa phần tử.");
-                    break;
-            }
-        }
+
         static void Main()
         {
-            Console.OutputEncoding = Encoding.UTF8;
-            ObservableCollection<string> obs = new ObservableCollection<string>();
-            obs.CollectionChanged += Change;
-            obs.Add("1");
-            obs.RemoveAt(0);
+            string sqlConnection = @"Data Source=localhost\SQLEXPRESS;Initial Catalog=The1;Integrated Security=True";
+            DbConnection dbConnection = new SqlConnection(sqlConnection);
+            dbConnection.Open();
+
+            dbConnection.Close();
+
             Console.ReadKey();
+
         }
     }
 

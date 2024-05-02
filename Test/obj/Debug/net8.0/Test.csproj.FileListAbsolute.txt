@@ -13,3 +13,12 @@ F:\D\VSCs\Test\obj\Debug\net8.0\Test.pdb
 F:\D\VSCs\Test\obj\Debug\net8.0\Test.genruntimeconfig.cache
 F:\D\VSCs\Test\obj\Debug\net8.0\ref\Test.dll
 F:\D\VSCs\Test\obj\Debug\net8.0\Test.sourcelink.json
+F:\D\VSCs\Test\obj\Debug\net8.0\Test.csproj.AssemblyReference.cache
+F:\D\VSCs\Test\bin\Debug\net8.0\Newtonsoft.Json.dll
+F:\D\VSCs\Test\obj\Debug\net8.0\Test.csproj.Up2Date
+F:\D\VSCs\Test\bin\Debug\net8.0\System.Data.SqlClient.dll
+F:\D\VSCs\Test\bin\Debug\net8.0\runtimes\win-arm64\native\sni.dll
+F:\D\VSCs\Test\bin\Debug\net8.0\runtimes\win-x64\native\sni.dll
+F:\D\VSCs\Test\bin\Debug\net8.0\runtimes\win-x86\native\sni.dll
+F:\D\VSCs\Test\bin\Debug\net8.0\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
+F:\D\VSCs\Test\bin\Debug\net8.0\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll

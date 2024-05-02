@@ -1,0 +1,108 @@
+using System;
+using System.Data.Common;
+using System.Net;
+using System.Runtime.ExceptionServices;
+using System.Runtime.InteropServices.Marshalling;
+using System.Runtime.Intrinsics.Arm;
+using System.Text;
+using System.Collections.Generic;
+using System.Linq;
+using System.IO;
+using System.Collections;
+using System.Collections.Immutable;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Security.Cryptography.X509Certificates;
+using System.IO.Compression;
+using Newtonsoft.Json;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Net.NetworkInformation;
+
+namespace NgocThe
+
+{
+    
+    public class Test
+    {
+        public static void PrintInfo(string info)
+        {
+            Console.WriteLine($"{info, 10}    task:{Task.CurrentId,3}    "+
+            $"thread: {Thread.CurrentThread.ManagedThreadId}");
+        }
+
+        public static void RunTask(int i)
+        {
+            PrintInfo($"Start {i, 3}");
+            Task.Delay(5000);
+            //PrintInfo($"Stop {i,3}");
+        }
+        public static async void RunTask1(int i)
+        {
+            PrintInfo($"Start {i, 3}");
+            await Task.Delay(1);
+            Task.Delay(5000);
+            
+            PrintInfo($"Stop {i,3}");
+        }
+        public static async Task RunTask2(int i)
+        {
+            PrintInfo($"Start {i, 3}");
+            await Task.Delay(1);
+            Task.Delay(5000);
+            
+            PrintInfo($"Stop {i,3}");
+        }
+
+        public static async void RunForeach(string str)
+        {
+            PrintInfo($"Start {str, 3}");
+            await Task.Delay(1);
+            Task.Delay(5000);
+        }
+
+        public static async void Inv1()
+        {
+            PrintInfo($"Xin chao 1");
+            await Task.Delay(5000);
+            PrintInfo($"Tam biet 1");
+
+        }
+
+        public static async void Inv2()
+        {
+            PrintInfo($"Xin chao 2");
+            await Task.Delay(5000);
+            PrintInfo($"Tam biet 2");
+
+        }
+
+        public static async void Inv3()
+        {
+            PrintInfo($"Xin chao 3");
+            await Task.Delay(5000);
+            PrintInfo($"Tam biet 3");
+        }
+        static void Main()
+        {
+            // Parallel.For
+            // System.Console.WriteLine("----------------Parallel.For----------------");
+            // ParallelLoopResult pl = Parallel.For(1, 20, RunTask1);
+            // System.Console.WriteLine($"All Task start and finish: {pl.IsCompleted}");
+
+            // Parallel.Foreach
+            // System.Console.WriteLine("----------------Parallel.Foreach----------------");
+            // List<string> lst1 = new List<string>(){"hihi", "haha", "hehe"};
+            // ParallelLoopResult pl1 = Parallel.ForEach(lst1, RunForeach);
+
+            // Parallel.Invoke
+            System.Console.WriteLine("----------------Parallel.Invoke----------------");
+            Parallel.Invoke(Inv1,Inv2, Inv3);
+
+            System.Console.WriteLine("fslfmld");
+            Console.ReadKey();
+
+        }
+    }
+
+}

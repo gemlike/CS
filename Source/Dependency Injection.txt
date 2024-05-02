@@ -1,0 +1,79 @@
+using System;
+using System.Data.Common;
+using System.Net;
+using System.Runtime.ExceptionServices;
+using System.Runtime.InteropServices.Marshalling;
+using System.Runtime.Intrinsics.Arm;
+using System.Text;
+using System.Collections.Generic;
+using System.Linq;
+using System.IO;
+using System.Collections;
+using System.Collections.Immutable;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Security.Cryptography.X509Certificates;
+using System.IO.Compression;
+using Newtonsoft.Json;
+
+namespace NgocThe
+
+{
+    public interface IHorn
+    {
+        void Beep();
+    }
+
+    public class SmallHorn : IHorn
+    {
+        public void Beep()
+        {
+            System.Console.WriteLine("beep-beep-beep");
+        }
+    }
+
+    public class HeavyHorn : IHorn
+    {
+        public void Beep()
+        {
+            System.Console.WriteLine("BEEP-BEEP-BEEP");
+        }
+    }
+
+    public class Car
+    {
+        IHorn ihrorn;
+        public Car(IHorn horn)
+        {
+            this.ihrorn = horn;
+        }
+
+        public void Beep()
+        {
+            ihrorn.Beep();
+        }
+
+
+    }
+    public class Test
+    {
+        
+        static void Main()
+        {
+            Console.OutputEncoding = Encoding.UTF8;
+            
+            SmallHorn sh = new SmallHorn();
+            HeavyHorn hh = new HeavyHorn();
+
+            Car c1 = new Car(sh);
+            Car c2 = new Car(hh);
+
+            c1.Beep();
+            c2.Beep();           
+            
+
+            Console.ReadKey();
+        }
+    }
+
+}
