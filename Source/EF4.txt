@@ -1,0 +1,49 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace NgocThe
+
+{
+    
+    public class Test
+    {
+        static async Task Main()
+        {
+            Console.OutputEncoding = Encoding.UTF8;
+            ShopContext context = new ShopContext();
+            // await context.DeleteDatabase();  // xóa database: shopdata nếu tồn tại
+            // await context.CreateDatabase();  // tạo lại database: shopdata
+            // await context.InsertSampleData();
+
+            var products = context.products;
+
+            var products1 = context.products
+                .Where(p => p.Price > 1)              // Lọc các sản phẩm giá trên 100
+                .OrderByDescending(p => p.Price)        // Sắp xếp giảm dần, tăng dần là OrderBy
+                .Take(2);                               // Chỉ lấy 2 dòng đầu
+
+            var products2 = await (from p in context.products select p).ToListAsync();
+            foreach(var pro in products2)
+            {
+                Console.WriteLine(pro.Name);
+            }
+
+            Console.WriteLine("Press any key to exit");
+            Console.ReadKey();
+
+        }
+    }
+
+}

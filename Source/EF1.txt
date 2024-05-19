@@ -1,0 +1,186 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace NgocThe
+
+{
+    [Table("Products")]
+    public class Product
+    {
+        [Key]
+        public int ProductId {set; get;}
+
+        [Required]
+        [StringLength(50)]
+        public string Name {set; get;}
+
+        [StringLength(50)]
+        public string Provider  {set; get;}
+    }
+
+    
+    public class Test
+    {
+        public static async Task CreateDatabase()
+        {
+            using(var dbContext = new ProductsContext())
+            {
+                string databaseName = dbContext.Database.GetDbConnection().Database;
+                System.Console.WriteLine("Create " + databaseName);
+                bool result = await dbContext.Database.EnsureCreatedAsync();
+                string res = result? "OK":"NG";
+                System.Console.WriteLine(res);
+
+            }
+        }
+
+        public static async Task DeleteDatabase()
+        {
+
+            using (var context = new ProductsContext())
+            {
+                String databasename = context.Database.GetDbConnection().Database;
+                Console.Write($"Có chắc chắn xóa {databasename} (y) ? ");
+                string input = Console.ReadLine();
+
+                // Hỏi lại cho chắc
+                if (input.ToLower() == "y")
+                {
+                    bool deleted = await context.Database.EnsureDeletedAsync();
+                    string deletionInfo = deleted ? "đã xóa" : "không xóa được";
+                    Console.WriteLine($"{databasename} {deletionInfo}");
+                }
+            }
+
+        }
+
+        public static async Task InsertProduct()
+        {
+            using (var context = new ProductsContext())
+            {
+                // Thêm sản phẩm 1
+                await  context.products.AddAsync(new Product
+                {
+                    Name = "Sản phẩm 1",
+                    Provider = "Công ty 1"
+                });
+                // Thêm sản phẩm 2
+                await  context.AddAsync(new Product()
+                {
+                    Name = "Sản phẩm 2",
+                    Provider = "Công ty 2"
+                });
+
+                // Thực hiện cập nhật thay đổi trong DbContext lên Server
+                int rows = await context.SaveChangesAsync();
+                Console.WriteLine($"Đã lưu {rows} sản phẩm");
+
+            }
+        }
+
+        public static async Task InsertRangeProduct()
+        {
+            using (var context = new ProductsContext())
+            {
+                var p1 = new  Product() {Name = "Sản phẩm 3", Provider = "CTY A"};
+                var p2 = new  Product() {Name = "Sản phẩm 4", Provider = "CTY A"};
+                var p3 = new  Product() {Name = "Sản phẩm 5", Provider = "CTY B"};
+
+                await context.AddRangeAsync(new object[] {p1, p2, p3});
+                
+
+                int rows = await context.SaveChangesAsync();
+                Console.WriteLine($"Đã lưu {rows} sản phẩm");
+            }
+        }
+
+        public static async Task ReadProducts()
+        {
+            using (var context = new ProductsContext())
+            {
+                // context.SetLogging();
+                // Lấy danh sách các sản phẩm trong bảng 
+                var products = await context.products.ToListAsync();
+
+                Console.WriteLine("Tất cả sản phẩm");
+                foreach (var product in products)
+                {
+                    Console.WriteLine($"{product.ProductId,2} {product.Name,  10} - {product.Provider}");
+                }
+                Console.WriteLine();
+                Console.WriteLine();
+
+                // Dùng LINQ để truy vấn đến DbSet products (bảng product)
+                // Lấy các sản phẩm cung cấp bởi CTY A 
+                products = await (from p in context.products
+                                where (p.Provider == "CTY A") select p
+                                )
+                                .ToListAsync();
+
+                // Nếu không dùng bất đồng bộ chỗ này, có thể dùng
+                // var pros = from p in context.products where (p.Provider == "CTY A") select p;
+
+                Console.WriteLine("Sản phẩm CTY A");
+                foreach (var product in products)
+                {
+                    Console.WriteLine($"{product.ProductId,2} {product.Name,  10} - {product.Provider}");
+                }
+            }
+        }
+
+        public static async Task RenameProduct(int id, string newName)
+        {
+            using (var context = new ProductsContext())
+            {
+
+                // Lấy  Product có  ID sản phẩm  chỉ  ra
+                var product = await (from p in context.products where (p.ProductId == id) select p).FirstOrDefaultAsync();
+
+                // Đổi tên và cập nhật
+                if (product != null)
+                {
+                    product.Name = newName;
+                    Console.WriteLine($"{product.ProductId,2} có tên mới = {product.Name,  10}");
+                    await context.SaveChangesAsync();  //Thi hành cập nhật
+                }
+            }
+        }
+
+        public static async Task DeleteProduct(int id)
+        {
+            using (var context = new ProductsContext())
+            {
+                // context.SetLogging();
+                var product = await (from p in context.products where (p.ProductId == id) select p).FirstOrDefaultAsync();
+
+                if (product != null)
+                {
+                    context.Remove(product);
+                    Console.WriteLine($"Xóa {product.ProductId}");
+                    await context.SaveChangesAsync();
+                }
+            }
+        }
+        static async Task Main()
+        {
+            Console.OutputEncoding = Encoding.UTF8;
+            await DeleteProduct(9);
+            Console.WriteLine("Press any key to exit");
+            Console.ReadKey();
+
+        }
+    }
+
+}

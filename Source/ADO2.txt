@@ -1,0 +1,132 @@
+using System;
+using System.Data.Common;
+using System.Net;
+using System.Runtime.ExceptionServices;
+using System.Runtime.InteropServices.Marshalling;
+using System.Runtime.Intrinsics.Arm;
+using System.Text;
+using System.Collections.Generic;
+using System.Linq;
+using System.IO;
+using System.Collections;
+using System.Collections.Immutable;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Security.Cryptography.X509Certificates;
+using System.IO.Compression;
+using Newtonsoft.Json;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Data.SqlClient;
+using System.Data;
+
+namespace NgocThe
+
+{
+    
+    public class Test
+    {
+
+        static void Main()
+        {
+            string sqlConnection = @"Data Source=.\SQLEXPRESS;Initial Catalog=The1;Integrated Security=True";
+            // ExecuteScalar
+            using(DbConnection dbConnection = new SqlConnection(sqlConnection))
+            {
+                dbConnection.Open();
+                using(SqlCommand comand = new SqlCommand())
+                {
+                    comand.Connection = (SqlConnection)dbConnection;
+                    // Phai declare @Danhmuc trong ssms trước
+                    comand.CommandText = "SELECT DanhmucID, TenDanhMuc, MoTa FROM Danhmuc where DanhmucID > @Danhmuc";
+                    comand.Parameters.AddWithValue("@Danhmuc",2);
+                    var m = comand.ExecuteScalar();
+                }
+                dbConnection.Close();
+            }
+            //ExecuteNonQuery
+            using(DbConnection dbConnection = new SqlConnection(sqlConnection))
+            {
+                // dbConnection.Open();
+                // using(var comand = dbConnection.CreateCommand())
+                // {
+                //     comand.CommandText = "delete Danhmuc where DanhmucID > 2";
+                //     var m = comand.ExecuteNonQuery();
+                // }
+                // dbConnection.Close();
+            }
+            //ExecuteReader
+            using(DbConnection dbConnection1 = new SqlConnection(sqlConnection))
+            {
+                dbConnection1.Open();
+
+                using(SqlCommand cmd = new SqlCommand())
+                {
+                    cmd.Connection = (SqlConnection) dbConnection1;
+                    cmd.CommandText = @"select DanhmucID, TenDanhMuc, MoTa FROM Danhmuc";
+                    
+                    DataTable dt = new DataTable();
+                    using(SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if(reader.HasRows)
+                        {
+                            //dt.Load(reader);
+                            while(reader.Read())
+                            {
+                                int danhMuc = (int)reader["DanhmucID"];
+                                string tenDanhMuc = reader["TenDanhMuc"].ToString();
+                                string mota = reader["MoTa"].ToString();
+
+                            }
+                        }
+                    }
+                }
+                dbConnection1.Close();
+            }
+            
+            // Procedure
+            using(DbConnection dbConnection1 = new SqlConnection(sqlConnection))
+            {
+                dbConnection1.Open();
+                using(SqlCommand cmd = (SqlCommand)dbConnection1.CreateCommand())
+                {
+                    cmd.CommandText = "SelectAll";
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new SqlParameter(){ParameterName = "@h", SqlDbType = SqlDbType.Int, Value = 10});
+                    using(SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if(reader.HasRows)
+                        {
+                            //dt.Load(reader);
+                            while(reader.Read())
+                            {
+                                int danhMuc = (int)reader["DanhmucID"];
+                                string tenDanhMuc = reader["TenDanhMuc"].ToString();
+                                string mota = reader["MoTa"].ToString();
+
+                            }
+                        }
+                    }
+                }
+                dbConnection1.Close();
+            }
+            // SqlDataAdapter 
+            using(DbConnection dbConnection2 = new SqlConnection(sqlConnection))
+            {
+                dbConnection2.Open();
+                using(SqlDataAdapter cmd = new SqlDataAdapter())
+                {
+                    cmd.SelectCommand = new SqlCommand("select * from DanhMuc", (SqlConnection)dbConnection2);
+                    DataSet dt = new DataSet(); 
+                    cmd.Fill(dt);
+                    DataRow dt1 = dt.Tables[0].Rows[0];
+                }
+
+                dbConnection2.Close();
+            }
+            Console.ReadKey();
+
+        }
+    }
+
+}
